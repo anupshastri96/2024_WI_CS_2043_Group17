@@ -1,7 +1,0 @@
-Groceries   600
-Utilities (electricity, water, internet)    250
-Rent    1,200
-Entertainment (movies, games)   150
-Transportation (gas, public transport)  100
-Dining Out  200
-Insurance (health/car)  300
