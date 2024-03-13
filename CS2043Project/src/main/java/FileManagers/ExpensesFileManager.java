@@ -34,15 +34,20 @@ class Expense {
     }
 }
 
+
 public class ExpensesFileManager {
     private static final String filePath = "C:\\Users\\afifs\\OneDrive\\Desktop\\Project\\CS2043Project\\data\\expenses.csv";
     private static LinkedList<Expense> expenses;
 
+    /**
+     * Creates a list. Please remember to reinitialize this object to refresh the list.
+     */
     public ExpensesFileManager(){
         expenses = readExpenses();
     }
 
-    public static LinkedList<Expense> readExpenses() {
+
+    private static LinkedList<Expense> readExpenses() {
         LinkedList<Expense> tempExpenses = new LinkedList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
@@ -61,6 +66,7 @@ public class ExpensesFileManager {
         sortExpenses(tempExpenses);
         return tempExpenses;
     }
+
 
     public static void writeExpenses(String name, double amount) {
         Expense expense = new Expense(name, amount);

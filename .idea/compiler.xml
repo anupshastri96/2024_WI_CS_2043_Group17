@@ -9,8 +9,5 @@
         <module name="CS2043Project" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="CS2043Project" target="17" />
-    </bytecodeTargetLevel>
   </component>
 </project>
