@@ -3,27 +3,51 @@ package FileManagers;
 import java.io.*;
 import java.util.LinkedList;
 
+/**
+ * Represents an expense with a name and an amount.
+ */
 class Expense {
     private String name;
     private double amount;
 
-    public Expense(String nameIn, double amountIn) {
-        name = nameIn;
-        amount = amountIn;
+    /**
+     * Constructs an Expense object with the given name and amount.
+     * @param name The name of the expense.
+     * @param amount The amount of the expense.
+     */
+    public Expense(String name, double amount) {
+        this.name = name;
+        this.amount = amount;
     }
 
+    /**
+     * Sets the name of the expense.
+     * @param name The name to set.
+     */
     public void setName(String name){
         this.name = name;
-
     }
+
+    /**
+     * Sets the amount of the expense.
+     * @param amount The amount to set.
+     */
     public void setAmount(double amount) {
         this.amount = amount;
     }
 
+    /**
+     * Retrieves the name of the expense.
+     * @return The name of the expense.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Retrieves the amount of the expense.
+     * @return The amount of the expense.
+     */
     public double getAmount() {
         return amount;
     }
@@ -34,20 +58,25 @@ class Expense {
     }
 }
 
-
+/**
+ * Manages expenses by reading from and writing to a CSV file.
+ */
 public class ExpensesFileManager {
-    private static final String filePath = "C:\\Users\\afifs\\OneDrive\\Desktop\\Project\\CS2043Project\\data\\expenses.csv";
-    private static LinkedList<Expense> expenses;
+    private final String filePath = "C:\\Users\\afifs\\OneDrive\\Desktop\\Project\\CS2043Project\\data\\expenses.csv";
+    private LinkedList<Expense> expenses;
 
     /**
-     * Creates a list. Please remember to reinitialize this object to refresh the list.
+     * Constructs a new ExpensesFileManager and reads expenses from the file.
      */
-    public ExpensesFileManager(){
+    public ExpensesFileManager() {
         expenses = readExpenses();
     }
 
-
-    private static LinkedList<Expense> readExpenses() {
+    /**
+     * Reads expenses from the CSV file.
+     * @return A LinkedList containing the read expenses.
+     */
+    private LinkedList<Expense> readExpenses() {
         LinkedList<Expense> tempExpenses = new LinkedList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
@@ -67,25 +96,37 @@ public class ExpensesFileManager {
         return tempExpenses;
     }
 
-
-    public static void writeExpenses(String name, double amount) {
+    /**
+     * Writes an expense to the CSV file and adds it to the list of expenses.
+     * @param name The name of the expense.
+     * @param amount The amount of the expense.
+     */
+    public void writeExpenses(String name, double amount) {
         Expense expense = new Expense(name, amount);
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
             writer.write(name + "," + amount + "\n");
         } catch (IOException e) {
             e.printStackTrace();
         }
-        expenses.add(expense); // Add the new expense to the list
+        expenses.add(expense);
         sortExpenses(expenses);
     }
 
-    public static void sortExpenses(LinkedList<Expense> expenses) {
-        expenses.sort((expense2, expense1) -> Double.compare(expense1.getAmount(), expense2.getAmount()));
+    /**
+     * Sorts the expenses list in ascending order by amount.
+     * @param expenses The list of expenses to sort.
+     */
+    private void sortExpenses(LinkedList<Expense> expenses) {
+        expenses.sort((expense1, expense2) -> Double.compare(expense1.getAmount(), expense2.getAmount()));
     }
 
-    public String printList() {
-        String string = "";
-        string += expenses.toString() + "\n";
-        return string;
+    /**
+     * Prints the list of expenses to the console.
+     */
+    public void printList() {
+        System.out.println("List of Expenses:");
+        for (Expense expense : expenses) {
+            System.out.println(expense);
+        }
     }
 }
