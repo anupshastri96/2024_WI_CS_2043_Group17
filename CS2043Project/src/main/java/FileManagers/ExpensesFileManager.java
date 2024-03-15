@@ -62,7 +62,7 @@ class Expense {
  * Manages expenses by reading from and writing to a CSV file.
  */
 public class ExpensesFileManager {
-    private final String filePath = "C:\\Users\\afifs\\OneDrive\\Desktop\\Project\\CS2043Project\\data\\expenses.csv";
+    private final String filePath = System.getProperty("user.dir") + "\\CS2043Project\\data\\expenses.csv";
     private LinkedList<Expense> expenses;
 
     /**

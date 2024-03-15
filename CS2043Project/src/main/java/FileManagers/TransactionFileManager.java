@@ -93,7 +93,7 @@ class Transaction {
  * Manages transactions by reading from and writing to a CSV file.
  */
 public class TransactionFileManager {
-    private static final String filePath = "C:\\Users\\afifs\\OneDrive\\Desktop\\Project\\CS2043Project\\data\\transactions.csv";
+    private static final String filePath = System.getProperty("user.dir") + "\\CS2043Project\\data\\transactions.csv";
 
     private static LinkedList<Transaction> transactions;
 

@@ -6,7 +6,7 @@ import java.io.*;
  * Manages income by reading from and writing to a CSV file.
  */
 public class IncomeFileManager {
-   private static final String filePath = "C:\\Users\\afifs\\OneDrive\\Desktop\\Project\\CS2043Project\\data\\income.csv";
+   private static final String filePath = System.getProperty("user.dir") + "\\CS2043Project\\data\\income.csv";
 
    /**
     * Reads the income value from the CSV file.
