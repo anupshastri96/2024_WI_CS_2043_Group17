@@ -1,11 +1,8 @@
 package ags.project;
-import FileManagers.ExpensesFileManager;
-import FileManagers.IncomeFileManager;
-import FileManagers.TransactionFileManager;
 import Lists.TransactionList;
+import Objects.User;
 
 import java.io.IOException;
-import static FileManagers.IncomeFileManager.*;
 
 public class Main{
     public static void main(String[] args) throws IOException {
