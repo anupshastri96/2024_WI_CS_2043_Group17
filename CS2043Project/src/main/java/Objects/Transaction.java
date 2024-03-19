@@ -16,6 +16,7 @@ public class Transaction {
     private char type; // The type of transaction, e.g., 'I' for income, 'E' for expense
     private double amount; // The amount of the transaction
     private String description; // A description of the transaction
+    private Category category;
 
     /**
      * Constructs a Transaction with detailed information including a name, type, amount, and description.
@@ -26,13 +27,14 @@ public class Transaction {
      * @param amount      The monetary amount of the transaction.
      * @param description A description of the transaction.
      */
-    public Transaction(String name, char type, double amount, String description) {
+    public Transaction(String name, char type, double amount, String description, Category category) {
         this.date = LocalDate.now();
         transactionId = ++transactionIdCounter;
         this.name = name;
         this.type = type;
         this.amount = amount;
         this.description = description;
+        this.category = category;
     }
 
     /**
@@ -44,8 +46,8 @@ public class Transaction {
      * @param type   The type of the transaction.
      * @param amount The monetary amount of the transaction.
      */
-    public Transaction(String name, char type, double amount) {
-        this(name, type, amount, "");
+    public Transaction(String name, char type, double amount, Category category) {
+        this(name, type, amount, "",category);
     }
 
     /**
@@ -146,4 +148,13 @@ public class Transaction {
     public void setDate(LocalDate date) {
         this.date = date;
     }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
 }
+

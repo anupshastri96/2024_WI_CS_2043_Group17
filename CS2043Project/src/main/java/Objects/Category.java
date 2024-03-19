@@ -1,6 +1,7 @@
 package Objects;
 
 import Lists.TransactionList;
+import Lists.*;
 
 /**
  * Represents a budget category with a name, a set budget amount,
@@ -22,6 +23,18 @@ public class Category {
         this.name = name;
         this.budget = budget;
         this.transactions = new TransactionList();
+    }
+
+    public double getBudget() {
+        return budget;
+    }
+
+    public void setBudget(double budget) {
+        this.budget = budget;
+    }
+
+    public void setTransactions(TransactionList transactions) {
+        this.transactions = transactions;
     }
 
     /**

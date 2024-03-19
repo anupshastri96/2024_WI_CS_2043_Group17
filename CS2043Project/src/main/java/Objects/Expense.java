@@ -17,8 +17,8 @@ public class Expense extends Transaction {
      * @param description A detailed description of the expense.
      * @param term        The term (short-term or long-term) of the expense.
      */
-    public Expense(String name, double amount, String description, Term term) {
-        super(name, 'w', amount, description);
+    public Expense(String name, double amount, String description, Term term, Category category) {
+        super(name, 'w', amount, description, category);
         this.term = term;
     }
 
@@ -29,8 +29,8 @@ public class Expense extends Transaction {
      * @param amount The monetary amount of the expense.
      * @param term   The term (short-term or long-term) of the expense.
      */
-    public Expense(String name, double amount, Term term) {
-        super(name, 'w', amount);
+    public Expense(String name, double amount, Term term, Category category) {
+        super(name, 'w', amount, category);
         this.term = term;
     }
 

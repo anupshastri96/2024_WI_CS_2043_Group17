@@ -2,6 +2,7 @@ package Lists;
 
 import java.util.LinkedList;
 import Enum.Term;
+import Objects.Category;
 import Objects.Expense;
 import Objects.Transaction;
 
@@ -45,8 +46,8 @@ public class ExpenseList {
      * @param description A description of the expense.
      * @param term        The term (short-term or long-term) of the expense.
      */
-    public void addExpense(String name, double amount, String description, Term term) {
-        Expense expense = new Expense(name, amount, description, term);
+    public void addExpense(String name, double amount, String description, Term term, Category category) {
+        Expense expense = new Expense(name, amount, description, term, category);
         expenseList.add(expense);
     }
 
@@ -57,8 +58,8 @@ public class ExpenseList {
      * @param amount The monetary amount of the expense.
      * @param term   The term (short-term or long-term) of the expense.
      */
-    public void addExpense(String name, double amount, Term term) {
-        Expense expense = new Expense(name, amount, term);
+    public void addExpense(String name, double amount, Term term, Category category) {
+        Expense expense = new Expense(name, amount, term, category);
         expenseList.add(expense);
     }
 

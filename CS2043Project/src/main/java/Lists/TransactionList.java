@@ -1,9 +1,7 @@
 package Lists;
 
-import Objects.Expense;
-import Objects.Transaction;
+import Objects.*;
 import java.util.LinkedList;
-import Enum.Term;
 
 /**
  * Represents a list of financial transactions, providing functionality to add, remove, and print transactions.
@@ -19,14 +17,29 @@ public class TransactionList {
         transactionList = new LinkedList<>();
     }
 
+    public LinkedList<Transaction> getTransactionList() {
+        return transactionList;
+    }
+
     /**
      * Adds a transaction to the list.
      *
      * @param transaction The Transaction object to add.
-     * @return true if the transaction was added successfully.
      */
-    public boolean addTransaction(Transaction transaction) {
-        return transactionList.add(transaction);
+    public void addTransaction(Transaction transaction) {
+        transactionList.add(transaction);
+        Category category = transaction.getCategory();
+        LinkedList<Transaction> transactionList = category.getTransactions().getTransactionList();
+        boolean found = false;
+        for (Transaction value : transactionList) {
+            if (value.equals(transaction)) {
+                found = true;
+                break;
+            }
+        }
+        if(!found){
+           transactionList.add(transaction);
+        }
     }
 
     /**
@@ -36,9 +49,11 @@ public class TransactionList {
      * @param type The type of the transaction, represented as a character.
      * @param amount The amount of the transaction.
      */
-    public void addTransaction(String name, char type, double amount) {
-        Transaction transaction = new Transaction(name, type, amount);
+    public void addTransaction(String name, char type, double amount, Category category) {
+        Transaction transaction = new Transaction(name, type, amount, category);
         transactionList.add(transaction);
+        category.getTransactions().addTransaction(transaction);
+
     }
 
     /**
@@ -50,9 +65,12 @@ public class TransactionList {
      * @param description A description of the transaction.
      * @return true if the transaction was added successfully.
      */
-    public void addTransaction(String name, char type, double amount, String description) {
-        Transaction transaction = new Transaction(name, type, amount, description);
+    public void addTransaction(String name, char type, double amount, String description, Category category) {
+        Transaction transaction = new Transaction(name, type, amount, description, category);
         transactionList.add(transaction);
+        category.getTransactions().addTransaction(transaction);
+
+
     }
 
     /**
