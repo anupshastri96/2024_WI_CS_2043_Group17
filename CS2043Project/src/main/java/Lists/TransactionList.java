@@ -55,8 +55,6 @@ public class TransactionList {
         transactionList.add(transaction);
     }
 
-
-
     /**
      * Removes a specific transaction from the list.
      *
