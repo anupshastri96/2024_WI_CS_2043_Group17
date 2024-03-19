@@ -1,7 +1,9 @@
 package Lists;
 
+import Objects.Expense;
 import Objects.Transaction;
 import java.util.LinkedList;
+import Enum.Term;
 
 /**
  * Represents a list of financial transactions, providing functionality to add, remove, and print transactions.
@@ -48,10 +50,12 @@ public class TransactionList {
      * @param description A description of the transaction.
      * @return true if the transaction was added successfully.
      */
-    public boolean addTransaction(String name, char type, double amount, String description) {
+    public void addTransaction(String name, char type, double amount, String description) {
         Transaction transaction = new Transaction(name, type, amount, description);
-        return transactionList.add(transaction);
+        transactionList.add(transaction);
     }
+
+
 
     /**
      * Removes a specific transaction from the list.
@@ -68,7 +72,7 @@ public class TransactionList {
      * @param transactionId The ID of the transaction to remove.
      */
     public void removeTransaction(int transactionId) {
-        transactionList.removeIf(t -> Transaction.getTransactionId() == transactionId);
+        transactionList.removeIf(t -> t.getTransactionId() == transactionId);
     }
 
     /**
@@ -82,7 +86,7 @@ public class TransactionList {
         for (Transaction transaction : transactionList) {
             System.out.printf("| %-10s | %-15d | %-8s | %-4c | %-8.2f | %-50s |%n",
                     transaction.getDate(),
-                    Transaction.getTransactionId(),
+                    transaction.getTransactionId(),
                     transaction.getName(),
                     transaction.getType(),
                     transaction.getAmount(),

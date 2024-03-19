@@ -8,7 +8,9 @@ import java.time.LocalDate;
  * individual financial transactions within a larger application.
  */
 public class Transaction {
-    private static int transactionId = 0; // A static counter for all transactions
+
+    private final int transactionId;
+    private static int transactionIdCounter = 0; // A static counter for all transactions
     LocalDate date; // The date of the transaction
     private String name; // The name associated with the transaction
     private char type; // The type of transaction, e.g., 'I' for income, 'E' for expense
@@ -26,7 +28,7 @@ public class Transaction {
      */
     public Transaction(String name, char type, double amount, String description) {
         this.date = LocalDate.now();
-        transactionId++;
+        transactionId = ++transactionIdCounter;
         this.name = name;
         this.type = type;
         this.amount = amount;
@@ -51,17 +53,8 @@ public class Transaction {
      *
      * @return The transaction ID.
      */
-    public static int getTransactionId() {
+    public int getTransactionId() {
         return transactionId;
-    }
-
-    /**
-     * Sets the global transaction ID. This method affects all instances of the Transaction class.
-     *
-     * @param transactionId The new transaction ID.
-     */
-    public static void setTransactionId(int transactionId) {
-        Transaction.transactionId = transactionId;
     }
 
     /**

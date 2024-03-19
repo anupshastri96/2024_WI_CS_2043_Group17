@@ -1,5 +1,6 @@
 package Objects;
 import Lists.CategoryList;
+import Lists.ExpenseList;
 import Lists.TransactionList;
 
 /**
@@ -11,8 +12,10 @@ public class User {
     private String username; // Username of the user
     protected String password; // Password for the user account
     private String email; // Email address of the user
-    public TransactionList transactionList; // List of transactions associated with the user
-    public CategoryList categoryList; // List of categories for budgeting associated with the user
+    private TransactionList transactionList; // List of transactions associated with the user
+    private CategoryList categoryList; // List of categories for budgeting associated with the user
+    private ExpenseList expenseList;
+
 
     /**
      * Constructs a new User with specified username, password, and email. Initializes empty lists for transactions and categories.
@@ -27,6 +30,7 @@ public class User {
         this.email = email;
         transactionList = new TransactionList();
         categoryList = new CategoryList();
+        expenseList = new ExpenseList();
     }
 
     /**
@@ -144,5 +148,13 @@ public class User {
         } else {
             return false;
         }
+    }
+
+    public ExpenseList getExpenseList() {
+        return expenseList;
+    }
+
+    public void setExpenseList(ExpenseList expenseList) {
+        this.expenseList = expenseList;
     }
 }
