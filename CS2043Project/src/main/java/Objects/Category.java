@@ -67,10 +67,18 @@ public class Category {
         return transactions;
     }
 
+    /**
+     * Getter for the expense list.
+     * @return The expense list.
+     */
     public ExpenseList getExpenses() {
         return expenses;
     }
 
+    /**
+     *
+     * @param expenses A new expense list.
+     */
     public void setExpenses(ExpenseList expenses) {
         this.expenses = expenses;
     }

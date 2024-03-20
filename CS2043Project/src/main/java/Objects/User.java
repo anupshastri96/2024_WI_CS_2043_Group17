@@ -150,10 +150,18 @@ public class User {
         }
     }
 
+    /**
+     * Getter for the expense list.
+     * @return The expense list.
+     */
     public ExpenseList getExpenseList() {
         return expenseList;
     }
 
+    /**
+     * Setter for the expense list
+     * @param expenseList The new expense list.
+     */
     public void setExpenseList(ExpenseList expenseList) {
         this.expenseList = expenseList;
     }

@@ -149,10 +149,18 @@ public class Transaction {
         this.date = date;
     }
 
+    /**
+     * Getter for category
+     * @return The category
+     */
     public Category getCategory() {
         return category;
     }
 
+    /**
+     * Setter method for category
+     * @param category Change the category
+     */
     public void setCategory(Category category) {
         this.category = category;
     }
