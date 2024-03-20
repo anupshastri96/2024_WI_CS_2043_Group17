@@ -38,7 +38,7 @@ public class TransactionList {
             }
         }
         if(!found){
-           transactionList.add(transaction);
+            transaction.getCategory().getTransactions().addTransaction(transaction);
         }
     }
 
@@ -69,8 +69,6 @@ public class TransactionList {
         Transaction transaction = new Transaction(name, type, amount, description, category);
         transactionList.add(transaction);
         category.getTransactions().addTransaction(transaction);
-
-
     }
 
     /**

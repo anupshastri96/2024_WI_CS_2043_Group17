@@ -6,7 +6,7 @@ import Enum.*;
 import java.io.IOException;
 
 public class Main{
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
 
         User afif = new User("afifsaba", "ags117","afifsaba53@gmail.com");
         TransactionList transactionList = new TransactionList();
@@ -20,17 +20,14 @@ public class Main{
         afif.getTransactionList().addTransaction("test2", 'd', 9999, food);
         afif.getTransactionList().addTransaction("test3", 'w', 9999, food);
         afif.getTransactionList().addTransaction("test4", 'w', 9999, food);
-        categoryList.printList();
 
-        /*
-        afif.getExpenseList().addExpense("Expense1", 100, Term.WEEKLY);
-        afif.getExpenseList().addExpense("Expense2", 200, Term.MONTHLY);
-        afif.getExpenseList().addExpense("Expense3", 300, Term.BIWEEKLY);
-        afif.getExpenseList().addExpense("Expense4", 400, Term.YEARLY);
+        afif.getExpenseList().addExpense("Expense1", 100, Term.WEEKLY,utility);
+        afif.getExpenseList().addExpense("Expense2", 200, Term.MONTHLY, food);
+        afif.getExpenseList().addExpense("Expense3", 300, Term.BIWEEKLY, utility);
+        afif.getExpenseList().addExpense("Expense4", 400, Term.YEARLY, utility);
+        categoryList.printList();
         afif.getTransactionList().printList();
         afif.getExpenseList().printList();
-
-         */
 
     }
 }

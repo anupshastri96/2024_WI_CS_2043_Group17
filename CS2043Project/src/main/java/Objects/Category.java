@@ -11,6 +11,8 @@ public class Category {
     private String name;
     private double budget;
     private TransactionList transactions;
+    private ExpenseList expenses;
+
 
     /**
      * Constructs a new Category with a specified name and budget.
@@ -23,6 +25,7 @@ public class Category {
         this.name = name;
         this.budget = budget;
         this.transactions = new TransactionList();
+        this.expenses = new ExpenseList();
     }
 
     public double getBudget() {
@@ -62,5 +65,13 @@ public class Category {
      */
     public TransactionList getTransactions() {
         return transactions;
+    }
+
+    public ExpenseList getExpenses() {
+        return expenses;
+    }
+
+    public void setExpenses(ExpenseList expenses) {
+        this.expenses = expenses;
     }
 }

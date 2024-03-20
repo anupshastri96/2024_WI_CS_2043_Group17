@@ -38,6 +38,21 @@ public class ExpenseList {
         this.expenseList = expenseList;
     }
 
+    public void addExpense(Expense expense){
+        expenseList.add(expense);
+        Category category = expense.getCategory();
+        LinkedList<Transaction> transactionList = category.getTransactions().getTransactionList();
+        boolean found = false;
+        for (Transaction value : transactionList) {
+            if (value.equals(expense)) {
+                found = true;
+                break;
+            }
+        }
+        if(!found){
+            expense.getCategory().getTransactions().addTransaction(expense);
+        }
+    }
     /**
      * Adds a new expense to the list with a description.
      *
@@ -49,6 +64,7 @@ public class ExpenseList {
     public void addExpense(String name, double amount, String description, Term term, Category category) {
         Expense expense = new Expense(name, amount, description, term, category);
         expenseList.add(expense);
+        category.getExpenses().addExpense(expense);
     }
 
     /**
@@ -61,6 +77,7 @@ public class ExpenseList {
     public void addExpense(String name, double amount, Term term, Category category) {
         Expense expense = new Expense(name, amount, term, category);
         expenseList.add(expense);
+        category.getExpenses().addExpense(expense);
     }
 
     /**
