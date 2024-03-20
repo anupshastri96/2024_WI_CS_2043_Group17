@@ -1,8 +1,4 @@
 package Objects;
-import Lists.CategoryList;
-import Lists.ExpenseList;
-import Lists.TransactionList;
-
 /**
  * Represents a user of the system, encapsulating user details such as username, password, and email,
  * along with their transactions and categories for managing personal finance.
@@ -12,9 +8,7 @@ public class User {
     private String username; // Username of the user
     protected String password; // Password for the user account
     private String email; // Email address of the user
-    private TransactionList transactionList; // List of transactions associated with the user
-    private CategoryList categoryList; // List of categories for budgeting associated with the user
-    private ExpenseList expenseList;
+    private BudgetTracker budgetTracker;
 
 
     /**
@@ -28,9 +22,15 @@ public class User {
         this.username = username;
         this.password = password;
         this.email = email;
-        transactionList = new TransactionList();
-        categoryList = new CategoryList();
-        expenseList = new ExpenseList();
+        budgetTracker = new BudgetTracker();
+    }
+
+    public BudgetTracker getBudgetTracker() {
+        return budgetTracker;
+    }
+
+    public void setBudgetTracker(BudgetTracker budgetTracker) {
+        this.budgetTracker = budgetTracker;
     }
 
     /**
@@ -87,41 +87,6 @@ public class User {
         this.email = email;
     }
 
-    /**
-     * Gets the transaction list of the user.
-     *
-     * @return The list of transactions associated with the user.
-     */
-    public TransactionList getTransactionList() {
-        return transactionList;
-    }
-
-    /**
-     * Sets the transaction list for the user.
-     *
-     * @param transactionList The new list of transactions for the user.
-     */
-    public void setTransactionList(TransactionList transactionList) {
-        this.transactionList = transactionList;
-    }
-
-    /**
-     * Gets the category list of the user.
-     *
-     * @return The list of budgeting categories associated with the user.
-     */
-    public CategoryList getCategoryList() {
-        return categoryList;
-    }
-
-    /**
-     * Sets the category list for the user.
-     *
-     * @param categoryList The new list of budgeting categories for the user.
-     */
-    public void setCategoryList(CategoryList categoryList) {
-        this.categoryList = categoryList;
-    }
 
     /**
      * Attempts to log the user in with a username and password.
@@ -148,21 +113,5 @@ public class User {
         } else {
             return false;
         }
-    }
-
-    /**
-     * Getter for the expense list.
-     * @return The expense list.
-     */
-    public ExpenseList getExpenseList() {
-        return expenseList;
-    }
-
-    /**
-     * Setter for the expense list
-     * @param expenseList The new expense list.
-     */
-    public void setExpenseList(ExpenseList expenseList) {
-        this.expenseList = expenseList;
     }
 }
