@@ -5,7 +5,7 @@ import Transactional.Category;
 import java.io.*;
 import java.util.LinkedList;
 
-
+/*
 public class CategoryFileManager implements Serializable {
 
     public static LinkedList<Category> readInTags(){
@@ -41,3 +41,6 @@ public class CategoryFileManager implements Serializable {
         }
     }
 }
+
+
+ */
