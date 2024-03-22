@@ -29,14 +29,16 @@ public class FileManager<T> {
      * @param filePath the file path starting from the program root dir.
      * @return the dataStructure stored in the file.
      */
-    public T readList(String filePath){
+    public T readList(String filePath) throws FileNotFoundException {
         T list = null;
+        FileInputStream inputStream = null;
         try {
-            FileInputStream inputStream = new FileInputStream(System.getProperty("user.dir") + filePath);
+            inputStream = new FileInputStream(System.getProperty("user.dir") + filePath);
             ObjectInputStream readIn = new ObjectInputStream(inputStream);
             list = (T) readIn.readObject();
+            inputStream.close();
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            throw new FileNotFoundException();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {

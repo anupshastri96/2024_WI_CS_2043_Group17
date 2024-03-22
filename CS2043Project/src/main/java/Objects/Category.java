@@ -1,12 +1,14 @@
 package Objects;
 
+import java.io.Serializable;
 import java.util.LinkedList;
+import java.util.Objects;
 
 /**
  * Represents a budget category with a name, a set budget amount,
  * and a list of transactions associated with this category.
  */
-public class Category {
+public class Category implements Serializable {
     private String name;
     private double budget;
     private LinkedList<Transaction> transactions;
@@ -59,5 +61,15 @@ public class Category {
         this.budget = budget;
     }
 
+    public boolean isOverBudget(double expenses){
+        return expenses > budget;
+    }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Category category = (Category) o;
+        return Objects.equals(name, category.name);
+    }
 }

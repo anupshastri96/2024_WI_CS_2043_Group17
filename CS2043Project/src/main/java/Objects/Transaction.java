@@ -1,5 +1,8 @@
 package Objects;
 
+import FileManagers.FileManager;
+import java.io.FileNotFoundException;
+import java.io.Serializable;
 import java.time.LocalDate;
 
 /**
@@ -7,16 +10,31 @@ import java.time.LocalDate;
  * date, name, type, amount, and description. It is designed to track and manage
  * individual financial transactions within a larger application.
  */
-public class Transaction {
+public class Transaction implements Serializable {
 
     private final int transactionId;
-    private static int transactionIdCounter = 0; // A static counter for all transactions
+    private static int transactionIdCounter = -1; // A static counter for all transactions
     LocalDate date; // The date of the transaction
     private String name; // The name associated with the transaction
     private char type; // The type of transaction, e.g., 'I' for income, 'E' for expense
     private double amount; // The amount of the transaction
     private String description; // A description of the transaction
     private Category category;
+
+    /**
+     * Helper method for checking if transactionIdCounter is initialized and
+     * will load value from file or set to zero if not initialized.
+     */
+    private static void checkInitialized(){
+        FileManager<Integer> loadIDCounter = new FileManager<>();
+        if (transactionIdCounter < 0) {
+            try {
+                transactionIdCounter = (Integer) loadIDCounter.readList("\\CS2043Project\\data\\transaction.bin");
+            } catch (FileNotFoundException e) {
+                transactionIdCounter = 0;
+            }
+        }
+    }
 
     /**
      * Constructs a Transaction with detailed information including a name, type, amount, and description.
@@ -28,8 +46,11 @@ public class Transaction {
      * @param description A description of the transaction.
      */
     public Transaction(String name, char type, double amount, String description, Category category) {
-        this.date = LocalDate.now();
+        checkInitialized();
+        FileManager<Integer> writeIDCounter = new FileManager<>();
         transactionId = ++transactionIdCounter;
+        writeIDCounter.writeList(transactionIdCounter,"\\CS2043Project\\data\\transaction.bin");
+        this.date = LocalDate.now();
         this.name = name;
         this.type = type;
         this.amount = amount;
