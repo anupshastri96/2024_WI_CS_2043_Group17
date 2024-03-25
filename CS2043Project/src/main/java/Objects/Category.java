@@ -25,6 +25,7 @@ public class Category implements Serializable {
     public Category(String name, double budget){
         this.name = name;
         this.budget = budget;
+
         this.transactions = new LinkedList<>();
         this.expenses = new LinkedList<>();
     }
@@ -72,4 +73,6 @@ public class Category implements Serializable {
         Category category = (Category) o;
         return Objects.equals(name, category.name);
     }
+
+
 }
