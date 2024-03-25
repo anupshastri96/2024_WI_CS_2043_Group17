@@ -8,9 +8,10 @@ package Objects;
 import java.util.LinkedList;
 
 public class BudgetTracker {
-    LinkedList<Category> categoryLinkedList;
-    LinkedList<Expense> expenseLinkedList;
-    LinkedList<Transaction> transactionLinkedList;
+    private LinkedList<Category> categoryLinkedList;
+    private LinkedList<Expense> expenseLinkedList;
+    private LinkedList<Transaction> transactionLinkedList;
+    private LinkedList<Goal> goalLinkedList;
 
     /**
      * Constructs a new BudgetTracker with empty lists for categories, expenses, and transactions.
@@ -19,6 +20,7 @@ public class BudgetTracker {
         categoryLinkedList = new LinkedList<>();
         expenseLinkedList = new LinkedList<>();
         transactionLinkedList = new LinkedList<>();
+        goalLinkedList = new LinkedList<>();
     }
 
     // Add and remove Categories
@@ -91,8 +93,20 @@ public class BudgetTracker {
         return expenseLinkedList.remove(expense);
     }
 
-    // Retrieve and change lists
+    // Add and remove goals
+    public void addGoal(Goal goal){
+        goalLinkedList.add(goal);
+    }
+    public void addGoal(String name, double amount, int duration){
+        Goal toAdd = new Goal(name, amount, duration);
+        goalLinkedList.add(toAdd);
+    }
+    public void removeGoal(Goal goal){
+        goalLinkedList.remove(goal);
+    }
 
+
+    // Retrieve and change lists
     /**
      * Retrieves the list of categories.
      *
