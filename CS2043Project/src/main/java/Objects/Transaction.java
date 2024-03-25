@@ -35,13 +35,12 @@ public class Transaction implements Serializable {
             }
         }
     }
-
     /**
      * Constructs a Transaction with detailed information including a name, type, amount, and description.
      * Automatically sets the transaction date to the current date and increments the transaction ID.
      *
      * @param name        The name of the transaction.
-     * @param type        The type of the transaction (e.g., 'I' for income, 'E' for expense).
+     * @param type        The type of the transaction (e.g., 'W' withdraw, 'D' for deposit).
      * @param amount      The monetary amount of the transaction.
      * @param description A description of the transaction.
      */
