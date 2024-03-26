@@ -6,6 +6,7 @@
 package Objects;
 
 import java.util.LinkedList;
+import Database.*;
 
 public class BudgetTracker {
     private LinkedList<Category> categoryLinkedList;

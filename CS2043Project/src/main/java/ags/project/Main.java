@@ -14,11 +14,10 @@ public class Main{
         Date date = new Date();
         //DB_User.addUser("afifsaba", "ags117","afifsaba53@gmail.com");
         User user = DB_User.getUser(2);
-        java.util.Date utilDate = new java.util.Date(); // Replace this with your actual java.util.Date object
-        java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
-        DB_Transaction.addTransaction(2, sqlDate, "Test 1", 'w', 100, "This is a test", "Food");
-
-        //User temp = DB_User.getUser(1);
+        DB_Transaction.addTransaction(2, "Test 1", 'w', 100, "This is a test", "Food");
+        Transaction transaction = DB_Transaction.getTransactionById(2);
+        transaction.getName();
+        //User temp = DB_User.getUser(1);;
         System.out.println(user.getUsername() + " " + user.getEmail());
 //        User afif = new User("afifsaba", "ags117","afifsaba53@gmail.com");
 //        Category utility = new Category("Utility's", 100);

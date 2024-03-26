@@ -67,13 +67,12 @@ public class Transaction implements Serializable {
      * @param type   The type of the transaction.
      * @param amount The monetary amount of the transaction.
      */
-//    public Transaction(int userId, int transactionId, LocalDate date, String name, char type, double amount, Category category) {
-//        this(userId, transactionId, date, name, type, amount, null, category);
-//    }
-//    public Transaction(int userId, int transactionId, String name, char type, double amount, Category category) {
-//        Date date = new Date();
-//        this(userId, transactionId, , name, type, amount, null, category);
-//    }
+    public Transaction(int userId, int transactionId, Date date, String name, char type, double amount, Category category) {
+        this(userId, transactionId, date, name, type, amount, null, category);
+    }
+    public Transaction(int userId, int transactionId, String name, char type, double amount, Category category) {
+       this(userId, transactionId, new Date(), name, type, amount, null, category);
+    }
 
 
     /**
