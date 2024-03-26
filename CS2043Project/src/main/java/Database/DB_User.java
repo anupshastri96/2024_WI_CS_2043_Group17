@@ -35,13 +35,13 @@ public class DB_User {
 
         try{
             dbStatement = dbConnection.prepareCall("{CALL getUser(?)}");
-            dbStatement.setInt(1, user_id);
+            dbStatement.setInt("user_id", user_id);
             dbResultSet = dbStatement.executeQuery();
             while(dbResultSet.next()){
                 String username = dbResultSet.getString("username");
                 String password = dbResultSet.getString("password");
                 String email = dbResultSet.getString("email");
-                temp = new User(username, password, email);
+                temp = new User(user_id, username, password, email);
             }
         }
         catch(SQLException e){

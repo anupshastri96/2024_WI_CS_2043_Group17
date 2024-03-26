@@ -5,10 +5,9 @@ import java.util.LinkedList;
 import Objects.*;
 
 public class DB_Transaction {
-    public static void addTransaction(int userid, String name, char type, double amount, String description, String category){
+    public static void addTransaction(int userid, Date utilDate, String name, char type, double amount, String description, String category){
         Connection dbConnection = DB_Access.Connect();
         CallableStatement dbStatement = null;
-        java.util.Date utilDate = new java.util.Date();
         java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
         try{
 
@@ -21,6 +20,7 @@ public class DB_Transaction {
             dbStatement.setString("description", description);
             dbStatement.setString("category", category);
             dbStatement.executeQuery();
+
         }
         catch(SQLException e){
             DB_Access.getSQLException(e);
@@ -29,27 +29,28 @@ public class DB_Transaction {
             DB_Access.Closing(dbStatement, dbConnection);
         }
     }
-    LinkedList<Transaction> refreshList(User user){
+    public static LinkedList<Transaction> getTransactionList(int userId){
         LinkedList<Transaction> list = new LinkedList<>();
         Connection dbConnection = DB_Access.Connect();
         CallableStatement dbStatement = null;
         Transaction transaction = null;
         ResultSet dbResultSet = null;
         try{
+            dbStatement = dbConnection.prepareCall("{CALL getTransactionByUser(?)}");
+            dbStatement.setInt(1, userId);
+            dbResultSet = dbStatement.executeQuery();
             while(dbResultSet.next()){
-                int userId = 0;
-                int transactionId = 0;
-                Date date = null; // The date of the transaction
-                String name = null; // The name associated with the transaction
-                char type = 0; // The type of transaction, e.g., 'I' for income, 'E' for expense
-                double amount = 0; // The amount of the transaction
-                String description = null; // A description of the transaction
-                Category category = null;
+                int transactionId = dbResultSet.getInt(2);
+                Date date = dbResultSet.getDate(3);
+                String name = dbResultSet.getString(4);
+                char type = dbResultSet.getString(5).charAt(0);
+                double amount = dbResultSet.getDouble(6);
+                String description = dbResultSet.getString(7);
+                String categoryName = dbResultSet.getString(8);
 
-                if(transactionId == user.getUserId()){
-                    transaction = new Transaction(userId, transactionId, date, name, type, amount, description, category);
-                    list.add(transaction);
-                }
+                Category category = DB_Category.getCategory(userId, categoryName);
+                transaction = new Transaction(userId, transactionId, date, name, type, amount, description, category);
+                list.add(transaction);
             }
         }
         catch (SQLException e){
@@ -58,17 +59,19 @@ public class DB_Transaction {
         return list;
     }
 
-    public static void updateTransaction(int transactionId, String name, double amount, String description, String category) {
+    public static void updateTransaction(int transactionId, Date date, String name, char type, double amount, String description, String category) {
         Connection dbConnection = DB_Access.Connect();
         CallableStatement dbStatement = null;
 
         try {
             dbStatement = dbConnection.prepareCall("{CALL updateTransaction(?,?,?,?,?,?)}");
-            dbStatement.setInt(1, transactionId);
-            dbStatement.setString(2, name);
-            dbStatement.setDouble(3, amount);
-            dbStatement.setString(4, description);
-            dbStatement.setString(5, category);
+            dbStatement.setInt(2, transactionId);
+            dbStatement.setDate(3, date);
+            dbStatement.setString(4, name);
+            dbStatement.setString(5, type + "");
+            dbStatement.setDouble(5, amount);
+            dbStatement.setString(6, description);
+            dbStatement.setString(7, category);
             dbStatement.executeUpdate();
         } catch (SQLException e) {
             DB_Access.getSQLException(e);
@@ -104,13 +107,14 @@ public class DB_Transaction {
             dbResultSet = dbStatement.executeQuery();
 
             if (dbResultSet.next()) {
-                int userId = dbResultSet.getInt("user_id");
-                Date date = dbResultSet.getDate("date");
-                String name = dbResultSet.getString("name");
-                char type = dbResultSet.getString("type").charAt(0);
-                double amount = dbResultSet.getDouble("amount");
-                String description = dbResultSet.getString("description");
-                Category category = new Category(dbResultSet.getString("category"), dbResultSet.getDouble("budget"));
+                int userId = dbResultSet.getInt(1);
+                Date date = dbResultSet.getDate(3);
+                String name = dbResultSet.getString(4);
+                char type = dbResultSet.getString(5).charAt(0);
+                double amount = dbResultSet.getDouble(6);
+                String description = dbResultSet.getString(7);
+                String categoryName = dbResultSet.getString(8);
+                Category category = DB_Category.getCategory(userId, categoryName);
 
                 transaction = new Transaction(userId, transactionId, date, name, type, amount, description, category);
             }
@@ -122,6 +126,4 @@ public class DB_Transaction {
 
         return transaction;
     }
-
-
 }

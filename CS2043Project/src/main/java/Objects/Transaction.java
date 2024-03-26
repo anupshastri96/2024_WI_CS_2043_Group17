@@ -14,29 +14,12 @@ import java.util.Date;
 public class Transaction implements Serializable {
     private final int userId;
     private final int transactionId;
-    private static int transactionIdCounter = -1; // A static counter for all transactions
     Date date; // The date of the transaction
     private String name; // The name associated with the transaction
     private char type; // The type of transaction, e.g., 'I' for income, 'E' for expense
     private double amount; // The amount of the transaction
     private String description; // A description of the transaction
     private Category category;
-
-    /**
-     * Helper method for checking if transactionIdCounter is initialized and
-     * will load value from file or set to zero if not initialized.
-     */
-    private static void checkInitialized(){
-        FileManager<Integer> loadIDCounter = new FileManager<>();
-        if (transactionIdCounter < 0) {
-            try {
-                transactionIdCounter = (Integer) loadIDCounter.readList("\\CS2043Project\\data\\transaction.bin");
-            } catch (FileNotFoundException e) {
-                transactionIdCounter = 0;
-            }
-        }
-    }
-
     /**
      * Constructs a Transaction with detailed information including a name, type, amount, and description.
      * Automatically sets the transaction date to the current date and increments the transaction ID.
@@ -47,7 +30,6 @@ public class Transaction implements Serializable {
      * @param description A description of the transaction.
      */
     public Transaction(int userId, int transactionId, Date date, String name, char type, double amount, String description, Category category) {
-        checkInitialized();
         this.userId = userId;
         this.transactionId = transactionId;
         this.date = date;
@@ -74,6 +56,9 @@ public class Transaction implements Serializable {
        this(userId, transactionId, new Date(), name, type, amount, null, category);
     }
 
+    public int getUserId() {
+        return userId;
+    }
 
     /**
      * Returns the transaction ID. Note: This is static and increments with each new transaction across all instances.
