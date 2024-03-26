@@ -4,6 +4,7 @@ import FileManagers.FileManager;
 import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Date;
 
 /**
  * Represents a financial transaction, including details such as transaction ID,
@@ -11,10 +12,10 @@ import java.time.LocalDate;
  * individual financial transactions within a larger application.
  */
 public class Transaction implements Serializable {
-
+    private final int userId;
     private final int transactionId;
     private static int transactionIdCounter = -1; // A static counter for all transactions
-    LocalDate date; // The date of the transaction
+    Date date; // The date of the transaction
     private String name; // The name associated with the transaction
     private char type; // The type of transaction, e.g., 'I' for income, 'E' for expense
     private double amount; // The amount of the transaction
@@ -45,12 +46,11 @@ public class Transaction implements Serializable {
      * @param amount      The monetary amount of the transaction.
      * @param description A description of the transaction.
      */
-    public Transaction(String name, char type, double amount, String description, Category category) {
+    public Transaction(int userId, int transactionId, Date date, String name, char type, double amount, String description, Category category) {
         checkInitialized();
-        FileManager<Integer> writeIDCounter = new FileManager<>();
-        transactionId = ++transactionIdCounter;
-        writeIDCounter.writeList(transactionIdCounter,"\\CS2043Project\\data\\transaction.bin");
-        this.date = LocalDate.now();
+        this.userId = userId;
+        this.transactionId = transactionId;
+        this.date = date;
         this.name = name;
         this.type = type;
         this.amount = amount;
@@ -67,9 +67,14 @@ public class Transaction implements Serializable {
      * @param type   The type of the transaction.
      * @param amount The monetary amount of the transaction.
      */
-    public Transaction(String name, char type, double amount, Category category) {
-        this(name, type, amount, "",category);
-    }
+//    public Transaction(int userId, int transactionId, LocalDate date, String name, char type, double amount, Category category) {
+//        this(userId, transactionId, date, name, type, amount, null, category);
+//    }
+//    public Transaction(int userId, int transactionId, String name, char type, double amount, Category category) {
+//        Date date = new Date();
+//        this(userId, transactionId, , name, type, amount, null, category);
+//    }
+
 
     /**
      * Returns the transaction ID. Note: This is static and increments with each new transaction across all instances.
@@ -157,7 +162,7 @@ public class Transaction implements Serializable {
      *
      * @return The transaction date.
      */
-    public LocalDate getDate() {
+    public Date getDate() {
         return date;
     }
 
@@ -166,7 +171,7 @@ public class Transaction implements Serializable {
      *
      * @param date The new date for the transaction.
      */
-    public void setDate(LocalDate date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 

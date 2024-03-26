@@ -3,6 +3,7 @@ package Statistics;
 import Objects.*;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.LinkedList;
 import Exceptions.DateFormatException;
 
@@ -19,9 +20,9 @@ public class StatisticsMethods {
      * @return Amount over or under budget (positive under, negative over)
      * @throws DateFormatException if start date is after end date.
      */
-    public double budgetAmountRemaining(LinkedList<Transaction> list, Category category, LocalDate startDate, LocalDate endDate) throws DateFormatException {
-        return category.getBudget() - totalExpenses(list, category, startDate, endDate);
-    }
+//    public double budgetAmountRemaining(LinkedList<Transaction> list, Category category, LocalDate startDate, LocalDate endDate) throws DateFormatException {
+//        return category.getBudget() - totalExpenses(list, category, startDate, endDate);
+ //   }
 
     /**
      * Calculates amount over or under a given budget.
@@ -41,24 +42,24 @@ public class StatisticsMethods {
      * @return total amount spent in specified time range for a category.
      * @throws DateFormatException if start date is after end date.
      */
-    public double totalExpenses(Category category, LocalDate startDate, LocalDate endDate) throws DateFormatException {
-        if (startDate.compareTo(endDate) >= 0)
-            throw new DateFormatException();
-
-        LinkedList<Transaction> list = category.getTransactions();
-        double totalExpenses = 0;
-
-        for (Transaction transaction : list) {
-            LocalDate date = transaction.getDate();
-
-            if (transaction instanceof Expense &&
-                    startDate.compareTo(date) <= 0 &&
-                    endDate.compareTo(date) >= 0){
-                totalExpenses += transaction.getAmount();
-            }
-        }
-        return totalExpenses;
-    }
+//    public double totalExpenses(Category category, LocalDate startDate, LocalDate endDate) throws DateFormatException {
+//        if (startDate.compareTo(endDate) >= 0)
+//            throw new DateFormatException();
+//
+//        LinkedList<Transaction> list = category.getTransactions();
+//        double totalExpenses = 0;
+//
+//        for (Transaction transaction : list) {
+//            Date date = transaction.getDate();
+//
+//            if (transaction instanceof Expense &&
+//                    startDate.compareTo(date) <= 0 &&
+//                    endDate.compareTo(date) >= 0){
+//                totalExpenses += transaction.getAmount();
+//            }
+//        }
+//        return totalExpenses;
+//    }
 
     /**
      * Sums all expenses over a given time period and category.
@@ -69,24 +70,24 @@ public class StatisticsMethods {
      * @return total amount spent in specified time range and category.
      * @throws DateFormatException if start date is after end date.
      */
-    public double totalExpenses(LinkedList<Transaction> list, Category category, LocalDate startDate, LocalDate endDate) throws DateFormatException {
-        if (startDate.compareTo(endDate) >= 0)
-            throw new DateFormatException();
-
-        double totalExpenses = 0;
-        for (Transaction transaction : list) {
-
-            LocalDate transactionDate = transaction.getDate();
-            Category transactionCategory = transaction.getCategory();
-
-            if (transaction instanceof Expense &&
-                    startDate.compareTo(transactionDate) <= 0 &&
-                    endDate.compareTo(transactionDate) >= 0 &&
-                    transactionCategory.equals(category)) {
-
-                totalExpenses += transaction.getAmount();
-            }
-        }
-        return totalExpenses;
-    }
+//    public double totalExpenses(LinkedList<Transaction> list, Category category, LocalDate startDate, LocalDate endDate) throws DateFormatException {
+//        if (startDate.compareTo(endDate) >= 0)
+//            throw new DateFormatException();
+//
+//        double totalExpenses = 0;
+//        for (Transaction transaction : list) {
+//
+//            LocalDate transactionDate = transaction.getDate();
+//            Category transactionCategory = transaction.getCategory();
+//
+//            if (transaction instanceof Expense &&
+//                    startDate.compareTo(transactionDate) <= 0 &&
+//                    endDate.compareTo(transactionDate) >= 0 &&
+//                    transactionCategory.equals(category)) {
+//
+//                totalExpenses += transaction.getAmount();
+//            }
+//        }
+//        return totalExpenses;
+//    }
 }
