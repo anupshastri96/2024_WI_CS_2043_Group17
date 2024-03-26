@@ -102,9 +102,19 @@ public class User {
      * @param password The password for login attempt.
      * @return true if login is successful, false otherwise.
      */
-    public boolean login(String username, String password) {
-        return this.username.equals(username) && this.password.equals(password);
+    public static User login(String username, String password, LinkedList<User> userLinkedList) {
+        for (User user : userLinkedList) {
+            if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
+                return user; // Authentication successful
+            }
+        }
+        return null; // Authentication failed
     }
+
+    private String getPassword() {
+        return password;
+    }
+
 
     /**
      * Attempts to change the user's password.
