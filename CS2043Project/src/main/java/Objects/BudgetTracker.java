@@ -5,7 +5,9 @@
  */
 package Objects;
 
+import java.sql.Date;
 import java.util.LinkedList;
+import Database.*;
 
 public class BudgetTracker {
     private LinkedList<Category> categoryLinkedList;
@@ -16,93 +18,11 @@ public class BudgetTracker {
     /**
      * Constructs a new BudgetTracker with empty lists for categories, expenses, and transactions.
      */
-    public BudgetTracker(){
-        categoryLinkedList = new LinkedList<>();
+    public BudgetTracker(int userId){
+        categoryLinkedList = DB_Category.getCategoryList(userId);
         expenseLinkedList = new LinkedList<>();
-        transactionLinkedList = new LinkedList<>();
+        transactionLinkedList = DB_Transaction.getTransactionList(userId);
         goalLinkedList = new LinkedList<>();
-    }
-
-    // Add and remove Categories
-
-    /**
-     * Adds a new category to the budget tracker.
-     *
-     * @param category The category to add.
-     * @return true if the category was successfully added; false otherwise.
-     */
-    public boolean addCategory(Category category){
-        return categoryLinkedList.add(category);
-    }
-
-    /**
-     * Removes a category from the budget tracker.
-     *
-     * @param category The category to remove.
-     * @return true if the category was successfully removed; false otherwise.
-     */
-    public boolean removeTransaction(Category category){
-        return categoryLinkedList.remove(category);
-    }
-
-    // Add and remove transactions
-
-    /**
-     * Adds a new transaction to the budget tracker.
-     *
-     * @param transaction The transaction to add.
-     * @return true if the transaction was successfully added; false otherwise.
-     */
-    public boolean addTransaction(Transaction transaction){
-        transaction.getCategory().getTransactions().add(transaction);
-        return transactionLinkedList.add(transaction);
-    }
-
-    /**
-     * Removes a transaction from the budget tracker.
-     *
-     * @param transaction The transaction to remove.
-     * @return true if the transaction was successfully removed; false otherwise.
-     */
-    public boolean removeTransaction(Transaction transaction){
-        transaction.getCategory().getTransactions().remove(transaction);
-        return transactionLinkedList.remove(transaction);
-    }
-
-    // Add and remove expenses
-
-    /**
-     * Adds a new expense to the budget tracker.
-     *
-     * @param expense The expense to add.
-     * @return true if the expense was successfully added; false otherwise.
-     */
-    public boolean addExpense(Expense expense){
-        expense.getCategory().getExpenses().add(expense);
-        return expenseLinkedList.add(expense);
-    }
-
-    /**
-     * Removes an expense from the budget tracker.
-     *
-     * @param expense The expense to remove.
-     * @return true if the expense was successfully removed; false otherwise.
-     */
-    public boolean removeExpense(Expense expense){
-        expense.getCategory().getExpenses().remove(expense);
-        return expenseLinkedList.remove(expense);
-    }
-
-    // Add and remove goals
-    public void addGoal(Goal goal){
-        goalLinkedList.add(goal);
-    }
-    public void addGoal(String name, double amount, int duration){
-        Goal toAdd = new Goal(name, amount, duration);
-        goalLinkedList.add(toAdd);
-    }
-    public void removeGoal(Goal goal){
-        goalLinkedList.remove(goal);
     }
 
 

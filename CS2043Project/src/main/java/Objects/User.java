@@ -1,4 +1,10 @@
 package Objects;
+
+import Database.DB_Transaction;
+
+import java.util.LinkedList;
+import java.util.concurrent.ThreadLocalRandom;
+
 /**
  * Represents a user of the system, encapsulating user details such as username, password, and email,
  * along with their transactions and categories for managing personal finance.
@@ -18,11 +24,12 @@ public class User {
      * @param password The password for the user.
      * @param email The email address of the user.
      */
-    public User(String username, String password, String email) {
+    public User(int userId, String username, String password, String email) {
+        this.userId = userId;
         this.username = username;
         this.password = password;
         this.email = email;
-        budgetTracker = new BudgetTracker();
+        this.budgetTracker = new BudgetTracker(userId);
     }
 
     public BudgetTracker getBudgetTracker() {
@@ -32,6 +39,7 @@ public class User {
     public void setBudgetTracker(BudgetTracker budgetTracker) {
         this.budgetTracker = budgetTracker;
     }
+
 
     /**
      * Gets the user's unique ID.
@@ -95,9 +103,19 @@ public class User {
      * @param password The password for login attempt.
      * @return true if login is successful, false otherwise.
      */
-    public boolean login(String username, String password) {
-        return this.username.equals(username) && this.password.equals(password);
+    public static User login(String username, String password, LinkedList<User> userLinkedList) {
+        for (User user : userLinkedList) {
+            if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
+                return user; // Authentication successful
+            }
+        }
+        return null; // Authentication failed
     }
+
+    private String getPassword() {
+        return password;
+    }
+
 
     /**
      * Attempts to change the user's password.

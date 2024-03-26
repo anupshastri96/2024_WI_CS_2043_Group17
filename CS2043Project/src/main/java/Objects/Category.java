@@ -9,6 +9,7 @@ import java.util.Objects;
  * and a list of transactions associated with this category.
  */
 public class Category implements Serializable {
+    private int userid;
     private String name;
     private double budget;
     private LinkedList<Transaction> transactions;
@@ -22,7 +23,8 @@ public class Category implements Serializable {
      * @param name The name of the category.
      * @param budget The budget amount for the category.
      */
-    public Category(String name, double budget){
+    public Category(int userid, String name, double budget){
+        this.userid = userid;
         this.name = name;
         this.budget = budget;
 
