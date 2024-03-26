@@ -40,6 +40,7 @@ public class User {
         this.budgetTracker = budgetTracker;
     }
 
+
     /**
      * Gets the user's unique ID.
      *

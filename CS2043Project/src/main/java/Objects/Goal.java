@@ -2,42 +2,29 @@ package Objects;
 
 import java.text.NumberFormat;
 
-public class Goal{
+public class Goal {
+    private int userid;
     private String goalName;
     private final double goalTotalAmt;
-    private final int goalDuration; 
-    private double goalMonthlyAmt;
 
-    public Goal(String goalName, double goalTotalAmt, int goalDuration){
+    public Goal(int userid, String goalName, double goalTotalAmt) {
+        this.userid = userid;
         this.goalName = goalName;
         this.goalTotalAmt = goalTotalAmt;
-        this.goalDuration = goalDuration;
-        goalMonthlyAmt = goalTotalAmt / (goalDuration * 12);
+
     }
 
-    public String getGoalName(){
+    public String getGoalName() {
         return goalName;
     }
 
-    public double getGoalTotalAmt(){
+    public double getGoalTotalAmt() {
         return goalTotalAmt;
     }
 
-    public int getGoalDuration(){
-        return goalDuration;
-    }
 
-    public double getGoalMonthlyAmt(){
-        return goalMonthlyAmt;
-    }
-
-    public void setGoalName(String goalName){
+    public void setGoalName(String goalName) {
         this.goalName = goalName;
     }
-    
-    public String toString(){
-        NumberFormat fm = NumberFormat.getCurrencyInstance();
-        return goalName + " in " + goalDuration + "years: " 
-                + fm.format(goalTotalAmt) + "(" + fm.format(goalMonthlyAmt) + "/monthly)";
-    }
+
 }
