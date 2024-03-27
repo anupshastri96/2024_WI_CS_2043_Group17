@@ -2,6 +2,8 @@ package ags.project;
 import Database.*;
 import Objects.*;
 import Enum.*;
+import com.mysql.cj.protocol.a.LocalDateTimeValueEncoder;
+
 import java.util.Scanner;
 
 import java.time.LocalDate;
@@ -13,31 +15,32 @@ import static java.lang.System.out;
 public class Main{
 
     public static void main(String[] args) {
-        Date date = new Date();
-        //DB_User.addUser("ags1", "ags117","test@gmail.com");
-        Scanner scan = new Scanner(System.in);
-        System.out.println("Enter your username and password.");
-        System.out.print("Username: ");
-        String username = scan.next();
-        System.out.print("Password: ");
-        String password = scan.next();
-        User user = User.login(username,password,DB_User.getUserList());
-        if(user == null){
-            System.err.print("Username or Password incorrect");
-            System.exit(1);
-        }
+
+//        //DB_User.addUser("ags1", "ags117","test@gmail.com");
+//        Scanner scan = new Scanner(System.in);
+//        System.out.println("Enter your username and password.");
+//        System.out.print("Username: ");
+//        String username = scan.next();
+//        System.out.print("Password: ");
+//        String password = scan.next();
+//        User user = User.login(username,password,DB_User.getUserList());
+//        if(user == null){
+//            System.err.print("Username or Password incorrect");
+//            System.exit(1);
+//        }
 
 
 
 
-        //DB_Category.addCategory(user.getUserId(), "testCategory1", 999);
 
-        System.out.println("userid: " + user.getUserId());
-        System.out.println("username: " + user.getUsername());
-        System.out.println("email: " + user.getEmail());
-        user.getBudgetTracker().printTransactionList();
-        System.out.println();
-        user.getBudgetTracker().printCategoryList();
+
+
+//        System.out.println("userid: " + user.getUserId());
+//        System.out.println("username: " + user.getUsername());
+//        System.out.println("email: " + user.getEmail());
+//        user.getBudgetTracker().printTransactionList();
+//        System.out.println();
+//        user.getBudgetTracker().printCategoryList();
 
 
 

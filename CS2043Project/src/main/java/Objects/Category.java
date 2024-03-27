@@ -9,7 +9,7 @@ import java.util.Objects;
  * and a list of transactions associated with this category.
  */
 public class Category implements Serializable {
-    private int userid;
+    private final int userid;
     private String name;
     private double budget;
     private LinkedList<Transaction> transactions;
