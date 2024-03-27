@@ -5,21 +5,21 @@ import java.util.LinkedList;
 import Objects.*;
 
 public class DB_Transaction {
-    public static void addTransaction(int userid, Date utilDate, String name, char type, double amount, String description, String category){
+
+    //TODO Add a checl to make sure that a valid category is being placed with the transaction, if not then the transaction is not added.
+    public static void addTransaction(int userid, String name, char type, double amount, String description, String category){
         Connection dbConnection = DB_Access.Connect();
         CallableStatement dbStatement = null;
-        java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
-        try{
 
-            dbStatement = dbConnection.prepareCall("{CALL addTransaction(?,?,?,?,?,?,?)}");
-            dbStatement.setInt("userid", userid);
-            dbStatement.setDate("date", sqlDate);
-            dbStatement.setString("name", name);
-            dbStatement.setString("type", String.valueOf(type));
-            dbStatement.setDouble("amount", amount);
-            dbStatement.setString("description", description);
-            dbStatement.setString("category", category);
-            dbStatement.executeQuery();
+        try{
+            dbStatement = dbConnection.prepareCall("{CALL addTransaction(?,?,?,?,?,?)}");
+            dbStatement.setInt(1, userid);
+            dbStatement.setString(2, name);
+            dbStatement.setString(3, String.valueOf(type));
+            dbStatement.setDouble(4, amount);
+            dbStatement.setString(5, description);
+            dbStatement.setString(6, category);
+            dbStatement.executeUpdate();
 
         }
         catch(SQLException e){
@@ -62,13 +62,12 @@ public class DB_Transaction {
     public static void updateTransaction(int transactionId, Date date, String name, char type, double amount, String description, String category) {
         Connection dbConnection = DB_Access.Connect();
         CallableStatement dbStatement = null;
-
         try {
-            dbStatement = dbConnection.prepareCall("{CALL updateTransaction(?,?,?,?,?,?)}");
-            dbStatement.setInt(2, transactionId);
-            dbStatement.setDate(3, date);
-            dbStatement.setString(4, name);
-            dbStatement.setString(5, type + "");
+            dbStatement = dbConnection.prepareCall("{CALL updateTransaction(?,?,?,?,?,?,?)}");
+            dbStatement.setInt(1, transactionId);
+            dbStatement.setDate(2, new java.sql.Date(date.getTime()));
+            dbStatement.setString(3, name);
+            dbStatement.setString(4, String.valueOf(type));
             dbStatement.setDouble(5, amount);
             dbStatement.setString(6, description);
             dbStatement.setString(7, category);
@@ -79,6 +78,7 @@ public class DB_Transaction {
             DB_Access.Closing(dbStatement, dbConnection);
         }
     }
+
 
     public static void deleteTransaction(int transactionId) {
         Connection dbConnection = DB_Access.Connect();
