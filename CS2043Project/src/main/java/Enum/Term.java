@@ -6,6 +6,10 @@ package Enum;
  */
 public enum Term {
     /**
+     * Represents an expense that occurs every day.
+     */
+    DAILY,
+    /**
      * Represents an expense that occurs every week.
      */
     WEEKLY,
