@@ -1,24 +1,21 @@
 package Database;
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.LinkedList;
 import Objects.*;
 
 public class DB_Transaction {
-    public static void addTransaction(int userid, Date utilDate, String name, char type, double amount, String description, String category){
+    public static void addTransaction(int userid, String name, char type, double amount, String description, String category){
         Connection dbConnection = DB_Access.Connect();
         CallableStatement dbStatement = null;
-        java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
         try{
 
             dbStatement = dbConnection.prepareCall("{CALL addTransaction(?,?,?,?,?,?,?)}");
-            dbStatement.setInt("userid", userid);
-            dbStatement.setDate("date", sqlDate);
-            dbStatement.setString("name", name);
-            dbStatement.setString("type", String.valueOf(type));
-            dbStatement.setDouble("amount", amount);
-            dbStatement.setString("description", description);
-            dbStatement.setString("category", category);
+            dbStatement.setInt(1, userid);
+            dbStatement.setString(2, name);
+            dbStatement.setString(3, String.valueOf(type));
+            dbStatement.setDouble(4, amount);
+            dbStatement.setString(5, description);
+            dbStatement.setString(6, category);
             dbStatement.executeQuery();
 
         }
@@ -99,7 +96,7 @@ public class DB_Transaction {
     public static Transaction getTransactionById(int transactionId) {
         Connection dbConnection = DB_Access.Connect();
         CallableStatement dbStatement = null;
-        ResultSet dbResultSet = null;
+        ResultSet dbResultSet;
         Transaction transaction = null;
 
         try {
