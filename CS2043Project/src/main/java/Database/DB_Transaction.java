@@ -62,6 +62,7 @@ public class DB_Transaction {
     public static void updateTransaction(int transactionId, Date date, String name, char type, double amount, String description, String category) {
         Connection dbConnection = DB_Access.Connect();
         CallableStatement dbStatement = null;
+        //TODO Test this method
 
         try {
             dbStatement = dbConnection.prepareCall("{CALL updateTransaction(?,?,?,?,?,?)}");

@@ -11,7 +11,6 @@ public class Goal {
         this.userid = userid;
         this.goalName = goalName;
         this.goalTotalAmt = goalTotalAmt;
-
     }
 
     public String getGoalName() {

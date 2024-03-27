@@ -11,10 +11,9 @@ import java.time.LocalDate;
  * individual financial transactions within a larger application.
  */
 public class Transaction implements Serializable {
-
-    private final int transactionId;
-    private static int transactionIdCounter = -1; // A static counter for all transactions
-    LocalDate date; // The date of the transaction
+    private int userId;
+    private int transactionId;
+    private java.util.Date date; // The date of the transaction
     private String name; // The name associated with the transaction
     private char type; // The type of transaction, e.g., 'I' for income, 'E' for expense
     private double amount; // The amount of the transaction
@@ -25,49 +24,28 @@ public class Transaction implements Serializable {
      * Helper method for checking if transactionIdCounter is initialized and
      * will load value from file or set to zero if not initialized.
      */
-    private static void checkInitialized(){
-        FileManager<Integer> loadIDCounter = new FileManager<>();
-        if (transactionIdCounter < 0) {
-            try {
-                transactionIdCounter = (Integer) loadIDCounter.readList("\\CS2043Project\\data\\transaction.bin");
-            } catch (FileNotFoundException e) {
-                transactionIdCounter = 0;
-            }
-        }
-    }
+
     /**
      * Constructs a Transaction with detailed information including a name, type, amount, and description.
      * Automatically sets the transaction date to the current date and increments the transaction ID.
      *
-     * @param name        The name of the transaction.
-     * @param type        The type of the transaction (e.g., 'W' withdraw, 'D' for deposit).
-     * @param amount      The monetary amount of the transaction.
-     * @param description A description of the transaction.
+     * @param userId
+     * @param transactionId
+     * @param date
+     * @param name          The name of the transaction.
+     * @param type          The type of the transaction (e.g., 'W' withdraw, 'D' for deposit).
+     * @param amount        The monetary amount of the transaction.
+     * @param description   A description of the transaction.
      */
-    public Transaction(String name, char type, double amount, String description, Category category) {
-        checkInitialized();
-        FileManager<Integer> writeIDCounter = new FileManager<>();
-        transactionId = ++transactionIdCounter;
-        writeIDCounter.writeList(transactionIdCounter,"\\CS2043Project\\data\\transaction.bin");
-        this.date = LocalDate.now();
+    public Transaction(int userId, int transactionId, java.util.Date date, String name, char type, double amount, String description, Category category) {
+        this.userId = userId;
+        this.transactionId = transactionId;
+        this.date = date;
         this.name = name;
         this.type = type;
         this.amount = amount;
         this.description = description;
         this.category = category;
-    }
-
-    /**
-     * Constructs a Transaction with basic information including a name, type, and amount.
-     * Automatically sets the transaction date to the current date and increments the transaction ID.
-     * The description is set to an empty string.
-     *
-     * @param name   The name of the transaction.
-     * @param type   The type of the transaction.
-     * @param amount The monetary amount of the transaction.
-     */
-    public Transaction(String name, char type, double amount, Category category) {
-        this(name, type, amount, "",category);
     }
 
     /**
@@ -156,7 +134,7 @@ public class Transaction implements Serializable {
      *
      * @return The transaction date.
      */
-    public LocalDate getDate() {
+    public java.util.Date getDate() {
         return date;
     }
 
@@ -165,7 +143,7 @@ public class Transaction implements Serializable {
      *
      * @param date The new date for the transaction.
      */
-    public void setDate(LocalDate date) {
+    public void setDate(java.util.Date date) {
         this.date = date;
     }
 

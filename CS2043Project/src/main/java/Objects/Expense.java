@@ -1,7 +1,7 @@
 package Objects;
 
 import Enum.Term;
-import java.util.Date;
+
 import java.time.LocalDate;
 
 /**
@@ -31,7 +31,7 @@ public class Expense extends Transaction {
      * @param amount The monetary amount of the expense.
      * @param term   The term (short-term or long-term) of the expense.
      */
-    public Expense(int userId, int transactionId, Date date, String name, double amount, Term term, Category category) {
+    public Expense(int userId, int transactionId, LocalDate date, String name, double amount, Term term, Category category) {
         super(userId, transactionId, date, name, 'w', amount, null, category);
         this.term = term;
     }
