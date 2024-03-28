@@ -15,7 +15,7 @@ import static java.lang.System.out;
 public class Main{
 
     public static void main(String[] args) {
-
+        DB_User.addUser("test", "dhehd", "jfenfe", 9999);
 //        //DB_User.addUser("ags1", "ags117","test@gmail.com");
 //        Scanner scan = new Scanner(System.in);
 //        System.out.println("Enter your username and password.");
