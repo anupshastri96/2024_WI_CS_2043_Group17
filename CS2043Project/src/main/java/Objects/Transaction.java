@@ -4,6 +4,7 @@ import FileManagers.FileManager;
 import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.LinkedList;
 
 /**
  * Represents a financial transaction, including details such as transaction ID,
@@ -161,6 +162,15 @@ public class Transaction implements Serializable {
      */
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public static boolean doesTransactionExist(int transactionId, LinkedList<Transaction> transactionLinkedList){
+        for (Transaction transaction : transactionLinkedList) {
+            if (transaction.getTransactionId() == transactionId) {
+                return true;
+            }
+        }
+        return false;
     }
 }
 
