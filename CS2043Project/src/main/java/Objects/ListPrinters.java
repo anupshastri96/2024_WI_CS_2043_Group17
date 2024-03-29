@@ -1,5 +1,7 @@
 package Objects;
 
+import Database.DB_Goal;
+
 import java.util.LinkedList;
 
 public class ListPrinters {
@@ -57,6 +59,21 @@ public class ListPrinters {
             );
         }
         System.out.println("----------------------------------------------------------------------------------------------------------------------------------------------------");
+    }
+    public static void printGoalsTable(LinkedList<Goal> goalsList) {
+        // Print table header
+        System.out.println("+--------+----------------------+--------------+--------------+------------+");
+        System.out.println("| User ID|         Name         | Amount Saved | Total Amount |    Date    |");
+        System.out.println("+--------+----------------------+--------------+--------------+------------+");
+
+        // Print each goal
+        for (Goal goal : goalsList) {
+            System.out.printf("| %6d | %-20s | %12.2f | %12.2f | %-10s |%n",
+                    goal.getUserid(), goal.getGoalName(), goal.getGoalAmtCollected(), goal.getGoalTotalAmt(), goal.getDate());
+        }
+
+        // Print table footer
+        System.out.println("+--------+----------------------+--------------+--------------+------------+");
     }
 }
 

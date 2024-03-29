@@ -57,8 +57,10 @@ public class DB_Goal {
             dbResultSet = dbStatement.executeQuery();
             while(dbResultSet.next()){
                 String name =  dbResultSet.getString(2);
-                double amount = dbResultSet.getDouble(3);
-                goal = new Goal(userid, name, amount);
+                double amountSaved = dbResultSet.getDouble(3);
+                double amountTotal = dbResultSet.getDouble(4);
+                Date date = dbResultSet.getDate(5);
+                goal = new Goal(userid, name, amountSaved,amountTotal,date);
                 list.add(goal);
             }
         }

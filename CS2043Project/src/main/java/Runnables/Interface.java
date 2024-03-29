@@ -1,4 +1,4 @@
-package ags.project;
+package Runnables;
 
 import Database.*;
 import Objects.*;
@@ -186,6 +186,10 @@ public class Interface {
 
             else if(command.equals("/removeGoal")){
 
+            }
+
+            else if(command.equals("/viewGoalList")){
+                ListPrinters.printGoalsTable(DB_Goal.getGoalList(user.getUserId()));
             }
             else if (command.equals("/commands")) {
                 System.out.println(commandList);
