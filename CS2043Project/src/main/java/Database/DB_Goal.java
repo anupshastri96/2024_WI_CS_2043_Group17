@@ -7,15 +7,16 @@ import java.sql.*;
 import java.util.LinkedList;
 
 public class DB_Goal {
-    public static void addGoal(int userid, String name, double amount){
+    public static void addGoal(int userid, String name, double amount, Date date){
         Connection dbConnection = DB_Access.Connect();
         CallableStatement dbStatement = null;
         try{
 
-            dbStatement = dbConnection.prepareCall("{CALL addGoal(?,?,?)}");
+            dbStatement = dbConnection.prepareCall("{CALL addGoal(?,?,?,?)}");
             dbStatement.setInt(1, userid);
             dbStatement.setString(2, name);
             dbStatement.setDouble(3, amount);
+            dbStatement.setDate(4, date);
             dbStatement.executeQuery();
 
         }

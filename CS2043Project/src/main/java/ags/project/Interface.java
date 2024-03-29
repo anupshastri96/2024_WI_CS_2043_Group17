@@ -4,9 +4,12 @@ import Database.*;
 import Objects.*;
 
 import java.io.Console;
+import java.util.Date;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Scanner;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Interface {
     private static User user = null;
@@ -153,13 +156,28 @@ public class Interface {
             else if(command.equals("/viewTransactionList")){
                 ListPrinters.printTransactionList(DB_Transaction.getTransactionList(user.getUserId()));
                 System.out.println(dashboard);
-
-
-
             }
 
             else if(command.equals("/addGoal")){
+                System.out.println("Please input the following information.");
+                System.out.print("Goal name: ");
+                String name = scan.next();
+                System.out.print("Goal amount: $");
+                double amount = scan.nextDouble();
 
+                Date dateObject = null;
+                boolean temp = true;
+                while(temp){
+                    System.out.println("Date you'd like to achieve this by?(YYYY/MM/DD): ");
+                    String date = scan.next();
+                    dateObject = dateConversion(date);
+                    if(dateObject != null){
+                        temp = false;
+                    }
+                }
+                DB_Goal.addGoal(user.getUserId(), name, amount, (java.sql.Date) dateObject);
+                System.out.println("Goal added");
+                System.out.println(dashboard);
             }
 
             else if(command.equals("/editGoal")){
@@ -188,6 +206,20 @@ public class Interface {
         System.out.println("Logout Successful. Goodbye " + user.getUsername());
     }
 
+    public static Date dateConversion(String date) {
+        // Define the date format that matches your input string
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        // Create a Date object by parsing the string input
+        Date dateObject = null;
+        try {
+            dateObject = dateFormat.parse(date);
+            System.out.println("Date object: " + dateObject);
+        } catch (ParseException e) {
+            System.out.println("Invalid date input");
+        }
+        return dateObject;
+    }
 
 }
 
