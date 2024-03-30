@@ -9,7 +9,7 @@ public class DB_Transaction {
         CallableStatement dbStatement = null;
         try{
 
-            dbStatement = dbConnection.prepareCall("{CALL addTransaction(?,?,?,?,?,?,?)}");
+            dbStatement = dbConnection.prepareCall("{CALL addTransaction(?,?,?,?,?,?)}");
             dbStatement.setInt(1, userid);
             dbStatement.setString(2, name);
             dbStatement.setString(3, String.valueOf(type));

@@ -1,5 +1,6 @@
 package Database;
 
+import Exceptions.UserNotFoundException;
 import Objects.*;
 
 import java.sql.*;
@@ -11,10 +12,11 @@ public class DB_User {
         CallableStatement dbStatement = null;
 
         try{
-            dbStatement = dbConnection.prepareCall("{CALL addUser(?,?,?)}");
+            dbStatement = dbConnection.prepareCall("{CALL addUser(?,?,?,?)}");
             dbStatement.setString("usr", username);
             dbStatement.setString("password", password);
             dbStatement.setString("email", email);
+            dbStatement.setDouble("monthly_income",0);
             dbStatement.executeQuery();
         }
         catch(SQLException e){
@@ -29,22 +31,27 @@ public class DB_User {
      * Gets the ID of a user given the username from .
      * @param username Username of userID to find.
      */
-    public static int getUserIDbyName(String username){
+    public static int getUserIDbyName(String username) throws UserNotFoundException {
         Connection dbConnection = DB_Access.Connect();
         CallableStatement dbStatement = null;
+        ResultSet dbResultSet = null;
         int userID = 0;
 
         try{
             dbStatement = dbConnection.prepareCall("{CALL getUserIDByName(?)}");
             dbStatement.setString("username", username);
-            ResultSet resultSet = dbStatement.executeQuery();
-            userID = resultSet.getInt("user_id");
+            dbResultSet = dbStatement.executeQuery();
+
+            if (dbResultSet.next()){
+                userID = dbResultSet.getInt("user_id");
+            }
+            else throw new UserNotFoundException();
         }
         catch(SQLException e){
             DB_Access.getSQLException(e);
-        }
-        finally{
+        } finally{
             DB_Access.Closing(dbStatement, dbConnection);
+            DB_Access.ClosingResultSet(dbResultSet);
         }
         return userID;
     }
