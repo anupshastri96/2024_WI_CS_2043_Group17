@@ -25,6 +25,30 @@ public class DB_User {
         }
     }
 
+    /**
+     * Gets the ID of a user given the username from .
+     * @param username Username of userID to find.
+     */
+    public static int getUserIDbyName(String username){
+        Connection dbConnection = DB_Access.Connect();
+        CallableStatement dbStatement = null;
+        int userID = 0;
+
+        try{
+            dbStatement = dbConnection.prepareCall("{CALL getUserIDByName(?)}");
+            dbStatement.setString("username", username);
+            ResultSet resultSet = dbStatement.executeQuery();
+            userID = resultSet.getInt("user_id");
+        }
+        catch(SQLException e){
+            DB_Access.getSQLException(e);
+        }
+        finally{
+            DB_Access.Closing(dbStatement, dbConnection);
+        }
+        return userID;
+    }
+
     public static User getUser(int user_id){
         Connection dbConnection = DB_Access.Connect();
         CallableStatement dbStatement = null;
