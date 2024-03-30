@@ -38,7 +38,8 @@ public class Interface {
                 "/addGoal - Add a saving goal\n" +
                 "/editGoal - Edit a goal\n" +
                 "/removeGoal - Remove a goal\n" +
-                "/viewGoalList - Veiw your current goals";
+                "/viewGoalList - View your current goals\n" +
+                "/addCategory - Add a budget category";
 
         String dashboard = "\n-----DASHBOARD-----";
         System.out.println("Login successful, Welcome " + user.getUsername());
@@ -84,6 +85,23 @@ public class Interface {
                     System.out.println(dashboard);
                 }
 
+            }
+
+            else if (command.equals("/addCategory")){
+                System.out.println("Please input the following information: ");
+                System.out.print("Category Name: ");
+                String name = scan.next();
+                System.out.print("Budget Amount: $");
+                double amount = scan.nextDouble();
+
+                System.out.println("Adding Category...");
+                if(DB_Category.doesCategoryExist(user.getUserId(), name)){
+                    System.err.println("Category already exists!");
+                }
+                else {
+                    DB_Category.addCategory(user.getUserId(), name, amount);
+                    System.out.println("Category added.");
+                }
             }
 
             else if(command.equals("/editTransaction")){
