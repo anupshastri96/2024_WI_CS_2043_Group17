@@ -11,7 +11,7 @@ import Database.*;
 
 public class BudgetTracker {
     private LinkedList<Category> categoryLinkedList;
-    private LinkedList<Expense> expenseLinkedList;
+
     private LinkedList<Transaction> transactionLinkedList;
     private LinkedList<Goal> goalLinkedList;
 
@@ -20,7 +20,6 @@ public class BudgetTracker {
      */
     public BudgetTracker(int userId){
         categoryLinkedList = DB_Category.getCategoryList(userId);
-        expenseLinkedList = new LinkedList<>();
         transactionLinkedList = DB_Transaction.getTransactionList(userId);
         goalLinkedList = new LinkedList<>();
     }
@@ -50,18 +49,7 @@ public class BudgetTracker {
      *
      * @return The list of expenses.
      */
-    public LinkedList<Expense> getExpenseLinkedList() {
-        return expenseLinkedList;
-    }
 
-    /**
-     * Sets the list of expenses.
-     *
-     * @param expenseLinkedList The new list of expenses.
-     */
-    public void setExpenseLinkedList(LinkedList<Expense> expenseLinkedList) {
-        this.expenseLinkedList = expenseLinkedList;
-    }
 
     /**
      * Retrieves the list of transactions.

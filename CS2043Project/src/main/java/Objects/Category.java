@@ -13,7 +13,6 @@ public class Category implements Serializable {
     private String name;
     private double budget;
     private LinkedList<Transaction> transactions;
-    private LinkedList<Expense> expenses;
 
 
     /**
@@ -29,7 +28,6 @@ public class Category implements Serializable {
         this.budget = budget;
 
         this.transactions = new LinkedList<>();
-        this.expenses = new LinkedList<>();
     }
 
     public String getName() {
@@ -46,14 +44,6 @@ public class Category implements Serializable {
 
     public void setTransactions(LinkedList<Transaction> transactions) {
         this.transactions = transactions;
-    }
-
-    public LinkedList<Expense> getExpenses() {
-        return expenses;
-    }
-
-    public void setExpenses(LinkedList<Expense> expenses) {
-        this.expenses = expenses;
     }
 
     public double getBudget() {

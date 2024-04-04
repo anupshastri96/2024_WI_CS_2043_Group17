@@ -5,8 +5,7 @@ import Exceptions.DateFormatException;
 import java.sql.*;
 import java.time.LocalDate;
 
-public class DB_implemention implements DB_Methods{
-    @Override
+public class DB_implemention{
     public void addUser(String username, String password, String email, double monthlyIncome) {
         DB_User.addUser(username, password, email, monthlyIncome);
     }

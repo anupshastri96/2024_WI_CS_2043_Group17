@@ -43,6 +43,13 @@ public class User {
         this.budgetTracker = budgetTracker;
     }
 
+    public double getMonthlyIncome() {
+        return monthlyIncome;
+    }
+
+    public void setMonthlyIncome(double monthlyIncome) {
+        this.monthlyIncome = monthlyIncome;
+    }
 
     /**
      * Gets the user's unique ID.
