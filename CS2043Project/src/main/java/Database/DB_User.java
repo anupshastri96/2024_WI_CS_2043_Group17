@@ -7,7 +7,40 @@ import java.sql.*;
 import java.util.LinkedList;
 
 public class DB_User {
-    public static void addUser(String username, String password, String email){
+
+    /**
+     * Login check to retrieve user data from database.
+     * @param username username of user.
+     * @param password password of user.
+     * @return the user object, null if no user found.
+     */
+    public static User login(String username, String password) {
+        Connection dbConnection = DB_Access.Connect();
+        CallableStatement dbStatement = null;
+        ResultSet dbResultSet = null;
+        User user = null;
+
+        try{
+            dbStatement = dbConnection.prepareCall("{CALL login(?,?)}");
+            dbStatement.setString("username", username);
+            dbStatement.setString("password", password);
+            dbResultSet = dbStatement.executeQuery();
+
+            if (dbResultSet.next()) {
+                int userId = dbResultSet.getInt("user_id");
+                user = DB_User.getUser(userId);
+            }
+        }
+        catch(SQLException e){
+            DB_Access.getSQLException(e);
+        }
+        finally{
+            DB_Access.Closing(dbStatement, dbConnection);
+        }
+        return user;
+    }
+
+    public static void addUser(String username, String password, String email, double monthlyIncome){
         Connection dbConnection = DB_Access.Connect();
         CallableStatement dbStatement = null;
 
@@ -16,7 +49,7 @@ public class DB_User {
             dbStatement.setString("usr", username);
             dbStatement.setString("password", password);
             dbStatement.setString("email", email);
-            dbStatement.setDouble("monthly_income",0);
+            dbStatement.setDouble("monthly_income", monthlyIncome);
             dbStatement.executeQuery();
         }
         catch(SQLException e){
@@ -68,9 +101,10 @@ public class DB_User {
             dbResultSet = dbStatement.executeQuery();
             while(dbResultSet.next()){
                 String username = dbResultSet.getString("username");
+                double monthlyIncome = dbResultSet.getDouble("monthly_income");
                 String password = dbResultSet.getString("password");
                 String email = dbResultSet.getString("email");
-                temp = new User(user_id, username, password, email);
+                temp = new User(user_id, username, password, email, monthlyIncome);
             }
         }
         catch(SQLException e){
@@ -96,7 +130,8 @@ public class DB_User {
                 String username = dbResultSet.getString(2);
                 String password = dbResultSet.getString(3);
                 String email = dbResultSet.getString(4);
-                user = new User(id, username, password, email);
+                double monthlyIncome = dbResultSet.getDouble(5);
+                user = new User(id, username, password, email, monthlyIncome);
                 list.add(user);
             }
         }

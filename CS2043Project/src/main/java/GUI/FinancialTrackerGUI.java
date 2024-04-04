@@ -52,7 +52,7 @@ public class FinancialTrackerGUI extends JFrame {
 
                 String username = usernameTextField.getText();
                 String password = new String(passwordField.getPassword());
-                User user = User.login(username, password, DB_User.getUserList());
+                User user = User.login(username, password);
                 if (user != null) {
                     welcomeLabel.setText("Login Successful");
                     switchPanel(dashBoard); // Switch to dashboard on successful login

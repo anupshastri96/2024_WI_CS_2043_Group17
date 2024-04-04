@@ -5,6 +5,7 @@ import java.sql.*;
 import java.util.Properties;
 
 public class DB_Access {
+
     public static Connection Connect(){
         Connection dbConnection = null;
         Properties dbConnectionProps = new Properties();

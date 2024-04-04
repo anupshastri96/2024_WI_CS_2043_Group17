@@ -183,7 +183,7 @@ public class BudgetApplication {
             String password = scanner.next();
             System.out.println("Register | Please enter email:");
             String email = scanner.next();
-            DB_User.addUser(username,password,email);
+            DB_User.addUser(username,password,email,0);
             conditionCheck = true;
 
         }
