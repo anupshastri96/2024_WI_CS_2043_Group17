@@ -1,11 +1,45 @@
 package Database;
 
+import Exceptions.UserNotFoundException;
 import Objects.*;
 
 import java.sql.*;
 import java.util.LinkedList;
 
 public class DB_User {
+
+    /**
+     * Login check to retrieve user data from database.
+     * @param username username of user.
+     * @param password password of user.
+     * @return the user object, null if no user found.
+     */
+    public static User login(String username, String password) {
+        Connection dbConnection = DB_Access.Connect();
+        CallableStatement dbStatement = null;
+        ResultSet dbResultSet = null;
+        User user = null;
+
+        try{
+            dbStatement = dbConnection.prepareCall("{CALL login(?,?)}");
+            dbStatement.setString("username", username);
+            dbStatement.setString("password", password);
+            dbResultSet = dbStatement.executeQuery();
+
+            if (dbResultSet.next()) {
+                int userId = dbResultSet.getInt("user_id");
+                user = DB_User.getUser(userId);
+            }
+        }
+        catch(SQLException e){
+            DB_Access.getSQLException(e);
+        }
+        finally{
+            DB_Access.Closing(dbStatement, dbConnection);
+        }
+        return user;
+    }
+
     public static void addUser(String username, String password, String email, double monthlyIncome){
         Connection dbConnection = DB_Access.Connect();
         CallableStatement dbStatement = null;
@@ -24,6 +58,35 @@ public class DB_User {
         finally{
             DB_Access.Closing(dbStatement, dbConnection);
         }
+    }
+
+    /**
+     * Gets the ID of a user given the username from .
+     * @param username Username of userID to find.
+     */
+    public static int getUserIDbyName(String username) throws UserNotFoundException {
+        Connection dbConnection = DB_Access.Connect();
+        CallableStatement dbStatement = null;
+        ResultSet dbResultSet = null;
+        int userID = 0;
+
+        try{
+            dbStatement = dbConnection.prepareCall("{CALL getUserIDByName(?)}");
+            dbStatement.setString("username", username);
+            dbResultSet = dbStatement.executeQuery();
+
+            if (dbResultSet.next()){
+                userID = dbResultSet.getInt("user_id");
+            }
+            else throw new UserNotFoundException();
+        }
+        catch(SQLException e){
+            DB_Access.getSQLException(e);
+        } finally{
+            DB_Access.Closing(dbStatement, dbConnection);
+            DB_Access.ClosingResultSet(dbResultSet);
+        }
+        return userID;
     }
 
     public static User getUser(int user_id){

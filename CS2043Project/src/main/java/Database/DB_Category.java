@@ -4,6 +4,7 @@ import Objects.Category;
 import Objects.Transaction;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.LinkedList;
 
 public class DB_Category {
@@ -47,6 +48,28 @@ public class DB_Category {
             DB_Access.Closing(dbStatement, dbConnection);
         }
         return category;
+    }
+
+    public static LinkedList<String> getCategoriesInRange(int userID, LocalDate startDate, LocalDate endDate){
+        LinkedList<String> list = new LinkedList<>();
+        Connection dbConnection = DB_Access.Connect();
+        CallableStatement dbStatement = null;
+        ResultSet dbResultSet = null;
+
+        try{
+            dbStatement = dbConnection.prepareCall("{CALL getCategoriesInRange(?,?,?)}");
+            dbStatement.setInt(1, userID);
+            dbStatement.setDate(2, Date.valueOf(startDate));
+            dbStatement.setDate(3, Date.valueOf(endDate));
+            dbResultSet = dbStatement.executeQuery();
+            while(dbResultSet.next()){
+                list.add(dbResultSet.getString(1));
+            }
+        }
+        catch (SQLException e){
+            DB_Access.getSQLException(e);
+        }
+        return list;
     }
 
     public static LinkedList<Category> getCategoryList(int userid){

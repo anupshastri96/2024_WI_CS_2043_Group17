@@ -1,6 +1,7 @@
 package Objects;
 
 import Database.DB_Transaction;
+import Database.DB_User;
 
 import java.util.LinkedList;
 import java.util.concurrent.ThreadLocalRandom;
@@ -33,6 +34,13 @@ public class User {
     }
 
 
+    public double getMonthlyIncome() {
+        return monthlyIncome;
+    }
+
+    public void setMonthlyIncome(double monthlyIncome) {
+        this.monthlyIncome = monthlyIncome;
+    }
 
     /**
      * Gets the user's unique ID.
@@ -96,13 +104,8 @@ public class User {
      * @param password The password for login attempt.
      * @return true if login is successful, false otherwise.
      */
-    public static User login(String username, String password, LinkedList<User> userLinkedList) {
-        for (User user : userLinkedList) {
-            if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
-                return user; // Authentication successful
-            }
-        }
-        return null; // Authentication failed
+    public static User login(String username, String password) {
+        return DB_User.login(username, password);
     }
 
     private String getPassword() {
