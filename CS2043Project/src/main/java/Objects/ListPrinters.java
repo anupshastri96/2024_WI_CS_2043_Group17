@@ -19,25 +19,7 @@ public class ListPrinters {
         System.out.println("-----------------------------------------------------------------");
     }
 
-    /**
-     * Prints a list of all expenses, including their details such as date, ID, name, term, amount, and description.
-     */
-    public static void printExpenseList(LinkedList<Expense> expenseLinkedList) {
-        System.out.printf("------------------------------------------------------------------------------------------------------------------------%n");
-        System.out.printf("| %-10s | %-15s | %-8s | %-10s | %-8s | %-50s |%n", "Date", "Expense ID", "Name", "Term", "Amount", "Description");
-        System.out.printf("------------------------------------------------------------------------------------------------------------------------%n");
-        for (Expense expense : expenseLinkedList) {
-            System.out.printf("| %-10s | %-15d | %-8s | %-10s | %-8.2f | %-50s |%n",
-                    expense.getDate(),
-                    expense.getTransactionId(),
-                    expense.getName(),
-                    expense.getTerm().name(),
-                    expense.getAmount(),
-                    expense.getDescription()
-            );
-        }
-        System.out.printf("------------------------------------------------------------------------------------------------------------------------%n");
-    }
+
 
     /**
      * Prints a list of all transactions, including their details such as date, ID, name, type, amount, and description.
@@ -61,20 +43,21 @@ public class ListPrinters {
         System.out.println("----------------------------------------------------------------------------------------------------------------------------------------------------");
     }
     public static void printGoalsTable(LinkedList<Goal> goalsList) {
-        // Print table header
-        System.out.println("+--------+----------------------+--------------+--------------+------------+");
-        System.out.println("| User ID|         Name         | Amount Saved | Total Amount |    Date    |");
-        System.out.println("+--------+----------------------+--------------+--------------+------------+");
+        // Print table header with "Name" column expanded to fit 50 characters
+        System.out.println("+--------+----------------------------------------------------+--------------+--------------+------------+");
+        System.out.println("| User ID|                        Name                        | Amount Saved | Total Amount |    Date    |");
+        System.out.println("+--------+----------------------------------------------------+--------------+--------------+------------+");
 
-        // Print each goal
+        // Print each goal with the name field now accommodating up to 50 characters
         for (Goal goal : goalsList) {
-            System.out.printf("| %6d | %-20s | %12.2f | %12.2f | %-10s |%n",
+            System.out.printf("| %6d | %-50s | %12.2f | %12.2f | %-10s |%n",
                     goal.getUserid(), goal.getGoalName(), goal.getGoalAmtCollected(), goal.getGoalTotalAmt(), goal.getDate());
         }
 
         // Print table footer
-        System.out.println("+--------+----------------------+--------------+--------------+------------+");
+        System.out.println("+--------+----------------------------------------------------+--------------+--------------+------------+");
     }
+
 }
 
 

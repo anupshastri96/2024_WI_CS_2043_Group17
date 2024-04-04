@@ -1,13 +1,14 @@
 package Database;
 
 import Objects.Category;
+import Objects.DateConversion;
 import Objects.Goal;
 
 import java.sql.*;
 import java.util.LinkedList;
 
 public class DB_Goal {
-    public static void addGoal(int userid, String name, double amount, Date date){
+    public static void addGoal(int userid, String name, double totalAmount, String date){
         Connection dbConnection = DB_Access.Connect();
         CallableStatement dbStatement = null;
         try{
@@ -15,8 +16,8 @@ public class DB_Goal {
             dbStatement = dbConnection.prepareCall("{CALL addGoal(?,?,?,?)}");
             dbStatement.setInt(1, userid);
             dbStatement.setString(2, name);
-            dbStatement.setDouble(3, amount);
-            dbStatement.setDate(4, date);
+            dbStatement.setDouble(3, totalAmount);
+            dbStatement.setString(4, date);
             dbStatement.executeQuery();
 
         }
@@ -68,6 +69,24 @@ public class DB_Goal {
             DB_Access.getSQLException(e);
         }
         return list;
+    }
+
+    public static void contributeToGoal(int userId, String name, double amount){
+        Connection dbConnection = DB_Access.Connect();
+        CallableStatement dbStatement = null;
+        try{
+            dbStatement = dbConnection.prepareCall("{CALL contributeToGoal(?,?,?)}");
+            dbStatement.setInt(1, userId);
+            dbStatement.setString(2, name);
+            dbStatement.setDouble(3, amount);
+            dbStatement.executeQuery();
+        }
+        catch(SQLException e){
+            DB_Access.getSQLException(e);
+        }
+        finally{
+            DB_Access.Closing(dbStatement, dbConnection);
+        }
     }
 
 }

@@ -11,12 +11,10 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class User {
     private int userId; // Unique identifier for the user
-
     private String username; // Username of the user
     protected String password; // Password for the user account
     private String email; // Email address of the user
     private double monthlyIncome;
-    private BudgetTracker budgetTracker;
 
 
     /**
@@ -32,16 +30,8 @@ public class User {
         this.password = password;
         this.email = email;
         this.monthlyIncome = monthlyIncome;
-        this.budgetTracker = new BudgetTracker(userId);
     }
 
-    public BudgetTracker getBudgetTracker() {
-        return budgetTracker;
-    }
-
-    public void setBudgetTracker(BudgetTracker budgetTracker) {
-        this.budgetTracker = budgetTracker;
-    }
 
 
     /**
