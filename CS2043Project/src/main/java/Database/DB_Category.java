@@ -94,13 +94,5 @@ public class DB_Category {
         }
         return list;
     }
-    public static boolean doesCategoryExist(int userId, String category){
-        LinkedList<Category> categories = getCategoryList(userId);
-        for (Category value : categories) {
-            if (value.getName().equals(category)) {
-                return true;
-            }
-        }
-        return false;
-    }
+
 }

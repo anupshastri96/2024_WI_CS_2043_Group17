@@ -38,7 +38,7 @@ public class DB_Transaction {
             dbResultSet = dbStatement.executeQuery();
             while(dbResultSet.next()){
                 int transactionId = dbResultSet.getInt(2);
-                Date date = dbResultSet.getDate(3);
+                String date = dbResultSet.getString(3);
                 String name = dbResultSet.getString(4);
                 char type = dbResultSet.getString(5).charAt(0);
                 double amount = dbResultSet.getDouble(6);
@@ -56,17 +56,17 @@ public class DB_Transaction {
         return list;
     }
 
-    public static void updateTransaction(int transactionId, Date date, String name, char type, double amount, String description, String category) {
+    public static void updateTransaction(int transactionId, String date, String name, char type, double amount, String description, String category) {
         Connection dbConnection = DB_Access.Connect();
         CallableStatement dbStatement = null;
         //TODO Test this method
 
         try {
             dbStatement = dbConnection.prepareCall("{CALL updateTransaction(?,?,?,?,?,?)}");
-            dbStatement.setInt(2, transactionId);
-            dbStatement.setDate(3, date);
-            dbStatement.setString(4, name);
-            dbStatement.setString(5, type + "");
+            dbStatement.setInt(1, transactionId);
+            dbStatement.setString(2, date);
+            dbStatement.setString(3, name);
+            dbStatement.setString(4, type + "");
             dbStatement.setDouble(5, amount);
             dbStatement.setString(6, description);
             dbStatement.setString(7, category);
@@ -106,7 +106,7 @@ public class DB_Transaction {
 
             if (dbResultSet.next()) {
                 int userId = dbResultSet.getInt(1);
-                Date date = dbResultSet.getDate(3);
+                String date = dbResultSet.getString(3);
                 String name = dbResultSet.getString(4);
                 char type = dbResultSet.getString(5).charAt(0);
                 double amount = dbResultSet.getDouble(6);

@@ -5,6 +5,8 @@ import Database.DB_Goal;
 import Database.DB_Transaction;
 import Database.DB_User;
 import Exceptions.UserNotFoundException;
+import Verification.Verify;
+
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -208,36 +210,14 @@ public class BudgetApplication {
             switch (userInput) {
                 case "0" -> menuOpen = false;
                 case "1" -> addTransaction(scanner, username);
-                case "2" -> updateTransaction();
-                case "3" -> deleteTransaction();
+                case "2" -> updateTransaction(scanner);
+                case "3" -> deleteTransaction(scanner);
                 default -> {
                 }
             }
         }
     }
-    private static void viewListMenu(Scanner scanner){
-        //Case 3 Transaction branch
-        boolean menuOpen = true;
-        while (menuOpen) {
-            System.out.println("""
-                    ==========================
-                    0 | Previous Menu
-                    1 | View Transactions
-                    2 | View Goals
-                    3 | View Categories
-                    """);
-            String userInput = scanner.next();
-            switch (userInput) {
-                case "0" -> menuOpen = false;
-                case "1" -> ListPrinters.printTransactionList(DB_Transaction.getTransactionList(user.getUserId()));
-                case "2" -> ListPrinters.printGoalsTable(DB_Goal.getGoalList(user.getUserId()));
-                case "3" -> ListPrinters.printCategoryList(DB_Category.getCategoryList(user.getUserId()));
-                default -> {
-                }
-            }
-        }
 
-    }
 
     private static void addTransaction(Scanner scanner, String username) {
         int userID;
@@ -289,10 +269,98 @@ public class BudgetApplication {
         }
     }
 
-    private static void deleteTransaction() {
+    private static void deleteTransaction(Scanner scanner) {
         ListPrinters.printTransactionList(DB_Transaction.getTransactionList(user.getUserId()));
+        System.out.println("Delete Transaction | Please enter Transaction ID:");
+        int transactionId = scanner.nextInt();
+        boolean found = Verify.doesTransactionExist(transactionId, DB_Transaction.getTransactionList(user.getUserId()));
+        if(found)
+            DB_Transaction.deleteTransaction(transactionId);
+        else{
+            System.out.println("Delete Transaction | Error, no transaction with that id found!");
+        }
     }
 
-    private static void updateTransaction() {
+    private static void updateTransaction(Scanner scanner) {
+        ListPrinters.printTransactionList(DB_Transaction.getTransactionList(user.getUserId()));
+        System.out.println("Update Transaction | Please enter Transaction ID:");
+        int transactionId = scanner.nextInt();
+        scanner.nextLine(); // Consume the newline left-over
+        System.out.println("Please wait...");
+        boolean found = Verify.doesTransactionExist(transactionId, DB_Transaction.getTransactionList(user.getUserId()));
+        if (found) {
+            Transaction transaction = DB_Transaction.getTransactionById(transactionId);
+
+            System.out.println("Update Transaction | Enter new name, or type (-) for no change:");
+            String name = scanner.nextLine();
+            if (name.equals("-")) {
+                name = transaction.getName();
+            }
+
+            System.out.println("Update Transaction | Please input updated date (YYYY-MM-DD):");
+            String date = scanner.nextLine();
+            if (!Verify.isValidDate(date) && !date.equals("-")) {
+                System.out.println("Date not correct!");
+                return; // Stop execution if the date is invalid
+            }
+            if (date.equals("-")) {
+                date = transaction.getDate();
+            }
+
+            System.out.println("Update Transaction | Enter new Type or type (-) for no change:");
+            char type = scanner.nextLine().charAt(0);
+            if (type == '-') {
+                type = transaction.getType();
+            }
+
+            System.out.println("Update Transaction | Enter new amount or type (-1) for no change:");
+            double amount = scanner.nextDouble();
+            scanner.nextLine(); // Consume the newline
+            if (amount == -1) {
+                amount = transaction.getAmount(); // Use getAmount here
+            }
+
+            System.out.println("Update Transaction | Enter new description or type (-) for no change:");
+            String description = scanner.nextLine();
+            if (description.equals("-")) {
+                description = transaction.getDescription();
+            }
+
+            System.out.println("Update Transaction | Enter new category or type (-) for no change:");
+            String category = scanner.nextLine();
+            if (!category.equals("-") && !Verify.doesCategoryExist(user.getUserId(), category)) {
+                System.out.println("Category does not exist. No change made.");
+                category = transaction.getCategory().getName();
+            } else if (category.equals("-")) {
+                category = transaction.getCategory().getName();
+            }
+
+            DB_Transaction.updateTransaction(transactionId, date, name, type, amount, description, category);
+        } else {
+            System.out.println("Update Transaction | Error, no transaction with that id found!");
+        }
+    }
+
+    private static void viewListMenu(Scanner scanner){
+        boolean menuOpen = true;
+        while (menuOpen) {
+            System.out.println("""
+                    ==========================
+                    0 | Previous Menu
+                    1 | View Transactions
+                    2 | View Goals
+                    3 | View Categories
+                    """);
+            String userInput = scanner.next();
+            switch (userInput) {
+                case "0" -> menuOpen = false;
+                case "1" -> ListPrinters.printTransactionList(DB_Transaction.getTransactionList(user.getUserId()));
+                case "2" -> ListPrinters.printGoalsTable(DB_Goal.getGoalList(user.getUserId()));
+                case "3" -> ListPrinters.printCategoryList(DB_Category.getCategoryList(user.getUserId()));
+                default -> {
+                }
+            }
+        }
+
     }
 }
