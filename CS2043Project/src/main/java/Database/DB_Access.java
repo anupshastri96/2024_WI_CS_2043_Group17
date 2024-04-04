@@ -31,7 +31,7 @@ public class DB_Access {
         return dbConnection;
     }
 
-    public static void Closing(CallableStatement dbStatement, Connection dbConnection){
+    public static void Closing(CallableStatement dbStatement){
         if(dbStatement != null){
             try{
                 dbStatement.close();
@@ -40,7 +40,9 @@ public class DB_Access {
             }
 
         }
+    }
 
+    public static void Closing(Connection dbConnection){
         if(dbConnection != null){
             try{
                 dbConnection.close();

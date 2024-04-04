@@ -1,9 +1,12 @@
 package Tests;
 
+import Database.DB_Access;
 import Database.DB_Goal;
 import Database.DB_User;
 import Objects.ListPrinters;
 import Objects.User;
+
+import java.sql.Connection;
 
 
 public class DBGoalTest {
@@ -17,6 +20,8 @@ public class DBGoalTest {
         //DB_Goal.addGoal(2, "Save for a Gaming Console", 500, "2024-11-15");
         //DB_Goal.addGoal(2, "Build an Emergency Fund", 2000, "2025-01-01");
 
-        ListPrinters.printGoalsTable(DB_Goal.getGoalList(2));
+        Connection dbConnection = DB_Access.Connect();
+        ListPrinters.printGoalsTable(DB_Goal.getGoalList(dbConnection,2));
+        DB_Access.Closing(dbConnection);
     }
 }

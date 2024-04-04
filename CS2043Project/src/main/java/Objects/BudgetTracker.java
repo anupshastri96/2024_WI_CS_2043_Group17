@@ -5,6 +5,7 @@
  */
 package Objects;
 
+import java.sql.Connection;
 import java.sql.Date;
 import java.util.LinkedList;
 import Database.*;
@@ -19,9 +20,11 @@ public class BudgetTracker {
      * Constructs a new BudgetTracker with empty lists for categories, expenses, and transactions.
      */
     public BudgetTracker(int userId){
-        categoryLinkedList = DB_Category.getCategoryList(userId);
-        transactionLinkedList = DB_Transaction.getTransactionList(userId);
+        Connection dbConnection = DB_Access.Connect();
+        categoryLinkedList = DB_Category.getCategoryList(dbConnection, userId);
+        transactionLinkedList = DB_Transaction.getTransactionList(dbConnection, userId);
         goalLinkedList = new LinkedList<>();
+        DB_Access.Closing(dbConnection);
     }
 
 

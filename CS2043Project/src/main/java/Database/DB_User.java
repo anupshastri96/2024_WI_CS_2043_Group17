@@ -14,8 +14,7 @@ public class DB_User {
      * @param password password of user.
      * @return the user object, null if no user found.
      */
-    public static User login(String username, String password) {
-        Connection dbConnection = DB_Access.Connect();
+    public static User login(Connection dbConnection, String username, String password) {
         CallableStatement dbStatement = null;
         ResultSet dbResultSet = null;
         User user = null;
@@ -28,20 +27,19 @@ public class DB_User {
 
             if (dbResultSet.next()) {
                 int userId = dbResultSet.getInt("user_id");
-                user = DB_User.getUser(userId);
+                user = DB_User.getUser(dbConnection, userId);
             }
         }
         catch(SQLException e){
             DB_Access.getSQLException(e);
         }
         finally{
-            DB_Access.Closing(dbStatement, dbConnection);
+            DB_Access.Closing(dbStatement);
         }
         return user;
     }
 
-    public static void addUser(String username, String password, String email, double monthlyIncome){
-        Connection dbConnection = DB_Access.Connect();
+    public static void addUser(Connection dbConnection, String username, String password, String email, double monthlyIncome){
         CallableStatement dbStatement = null;
 
         try{
@@ -56,7 +54,7 @@ public class DB_User {
             DB_Access.getSQLException(e);
         }
         finally{
-            DB_Access.Closing(dbStatement, dbConnection);
+            DB_Access.Closing(dbStatement);
         }
     }
 
@@ -64,8 +62,7 @@ public class DB_User {
      * Gets the ID of a user given the username from .
      * @param username Username of userID to find.
      */
-    public static int getUserIDbyName(String username) throws UserNotFoundException {
-        Connection dbConnection = DB_Access.Connect();
+    public static int getUserIDbyName(Connection dbConnection, String username) throws UserNotFoundException {
         CallableStatement dbStatement = null;
         ResultSet dbResultSet = null;
         int userID = 0;
@@ -83,14 +80,13 @@ public class DB_User {
         catch(SQLException e){
             DB_Access.getSQLException(e);
         } finally{
-            DB_Access.Closing(dbStatement, dbConnection);
+            DB_Access.Closing(dbStatement);
             DB_Access.ClosingResultSet(dbResultSet);
         }
         return userID;
     }
 
-    public static User getUser(int user_id){
-        Connection dbConnection = DB_Access.Connect();
+    public static User getUser(Connection dbConnection, int user_id){
         CallableStatement dbStatement = null;
         User temp = null;
         ResultSet dbResultSet = null;
@@ -111,7 +107,7 @@ public class DB_User {
             DB_Access.getSQLException(e);
         }
         finally{
-            DB_Access.Closing(dbStatement, dbConnection);
+            DB_Access.Closing(dbStatement);
             DB_Access.ClosingResultSet(dbResultSet);
         }
         return temp;

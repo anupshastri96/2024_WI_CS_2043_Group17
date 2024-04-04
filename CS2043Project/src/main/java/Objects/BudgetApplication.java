@@ -1,10 +1,11 @@
 package Objects;
 
-import Database.DB_Category;
-import Database.DB_Goal;
-import Database.DB_Transaction;
-import Database.DB_User;
+import Database.*;
 import Exceptions.UserNotFoundException;
+import Runnables.ChartTest;
+import javafx.application.Application;
+
+import java.sql.Connection;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -38,7 +39,7 @@ public class BudgetApplication {
             switch (userInput) {
                 case "0" -> programRunning = false;
                 case "1" -> addTransaction(scanner, username);
-                case "2" -> statementsMenu();
+                case "2" -> statementsMenu(scanner, args);
                 case "3" -> transactionsMenu(scanner, username);
                 case "4" -> goalsMenu();
                 case "5" -> categoriesMenu(scanner);
@@ -94,7 +95,27 @@ public class BudgetApplication {
     }
 
 
-    private static void statementsMenu() {
+    private static void statementsMenu(Scanner scanner, String[] args) {
+        boolean menuOpen = true;
+        while (menuOpen) {
+            //Case 6 Category branch
+            System.out.println("""
+                    ==========================
+                    0 | Previous Menu
+                    1 | Create YTD budget chart
+                    2 | -
+                    3 | -
+                    """);
+            String userInput = scanner.next();
+            switch (userInput) {
+                case "0" -> menuOpen = false;
+                case "1" -> ChartTest.launch(ChartTest.class, args);
+                case "2" -> System.out.println("");
+                case "3" -> deleteCategory();
+                default -> {
+                }
+            }
+        }
     }
 
     /**
@@ -132,6 +153,8 @@ public class BudgetApplication {
      * @param scanner scanner for user input.
      */
     private static void registerPrompt(Scanner scanner){
+        Connection dbConnection = DB_Access.Connect();
+
         boolean conditionCheck = false;
         while (!conditionCheck) {
             String username = null;
@@ -140,7 +163,7 @@ public class BudgetApplication {
                 try {
                     System.out.println("Register | Please enter username:");
                     username = scanner.next();
-                    DB_User.getUserIDbyName(username);
+                    DB_User.getUserIDbyName(dbConnection,username);
                     System.out.println("Username is already in use");
                 } catch (UserNotFoundException e) {
                     existingUserCondition = true;
@@ -151,10 +174,11 @@ public class BudgetApplication {
             String password = scanner.next();
             System.out.println("Register | Please enter email:");
             String email = scanner.next();
-            DB_User.addUser(username,password,email,0);
+            DB_User.addUser(dbConnection,username,password,email,0);
             conditionCheck = true;
 
         }
+        DB_Access.Closing(dbConnection);
     }
 
     /**
@@ -163,6 +187,7 @@ public class BudgetApplication {
      * @return the username of user.
      */
     private static String loginPrompt(Scanner scanner){
+        Connection dbConnection = DB_Access.Connect();
         boolean conditionCheck = false;
         String username = null;
 
@@ -174,9 +199,9 @@ public class BudgetApplication {
                 String password = scanner.next();
 
                 System.out.println("Login | Verifying, please wait...");
-                int userID = DB_User.getUserIDbyName(username);
+                int userID = DB_User.getUserIDbyName(dbConnection,username);
                 System.out.println(userID);
-                user = DB_User.getUser(userID);
+                user = DB_User.getUser(dbConnection,userID);
 
                 if (user.password.equals(password)) {
                     conditionCheck = true;
@@ -190,6 +215,7 @@ public class BudgetApplication {
         }
         System.out.println("Login Successful | Welcome "+ username);
         System.out.println(user.getUserId());
+        DB_Access.Closing(dbConnection);
         return username;
     }
 
@@ -216,6 +242,7 @@ public class BudgetApplication {
         }
     }
     private static void viewListMenu(Scanner scanner){
+        Connection dbConnection = DB_Access.Connect();
         //Case 3 Transaction branch
         boolean menuOpen = true;
         while (menuOpen) {
@@ -229,9 +256,9 @@ public class BudgetApplication {
             String userInput = scanner.next();
             switch (userInput) {
                 case "0" -> menuOpen = false;
-                case "1" -> ListPrinters.printTransactionList(DB_Transaction.getTransactionList(user.getUserId()));
-                case "2" -> ListPrinters.printGoalsTable(DB_Goal.getGoalList(user.getUserId()));
-                case "3" -> ListPrinters.printCategoryList(DB_Category.getCategoryList(user.getUserId()));
+                case "1" -> ListPrinters.printTransactionList(DB_Transaction.getTransactionList(dbConnection,user.getUserId()));
+                case "2" -> ListPrinters.printGoalsTable(DB_Goal.getGoalList(dbConnection,user.getUserId()));
+                case "3" -> ListPrinters.printCategoryList(DB_Category.getCategoryList(dbConnection,user.getUserId()));
                 default -> {
                 }
             }
@@ -240,9 +267,10 @@ public class BudgetApplication {
     }
 
     private static void addTransaction(Scanner scanner, String username) {
+        Connection dbConnection = DB_Access.Connect();
         int userID;
         try {
-            userID = DB_User.getUserIDbyName(username); // Get the user ID based on username
+            userID = DB_User.getUserIDbyName(dbConnection,username); // Get the user ID based on username
         } catch (UserNotFoundException e) {
             e.printStackTrace(); // Print the error if user is not found
             return;// Exit the method if the user is not found
@@ -278,19 +306,22 @@ public class BudgetApplication {
             if (category.equals("-"))
                 category = null;
 
-            else if(DB_Category.getCategory(userID, category) == null){
+            else if(DB_Category.getCategory(dbConnection,userID, category) == null){
                 System.out.println("New Transaction | Category does not exist:");
                 continue; // Ask for the transaction details again
             }
 
-            DB_Transaction.addTransaction(userID, name, type.charAt(0), amount, description, category);
+            DB_Transaction.addTransaction(dbConnection,userID, name, type.charAt(0), amount, description, category);
             System.out.println("Transaction added successfully.");
             break; // Break out of the loop since transaction is successfully added
         }
+        DB_Access.Closing(dbConnection);
     }
 
     private static void deleteTransaction() {
-        ListPrinters.printTransactionList(DB_Transaction.getTransactionList(user.getUserId()));
+        Connection dbConnect = DB_Access.Connect();
+        ListPrinters.printTransactionList(DB_Transaction.getTransactionList(dbConnect, user.getUserId()));
+        DB_Access.Closing(dbConnect);
     }
 
     private static void updateTransaction() {
