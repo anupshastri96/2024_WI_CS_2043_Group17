@@ -9,11 +9,13 @@ import Objects.Transaction;
 import Objects.User;
 import Verification.Verify;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -116,6 +118,7 @@ public class BudgetApplication extends Application {
         // Upon closing window
         budgetApplicationStage.setOnCloseRequest(e -> closeApplication());
 
+
         //Transaction Menu
         MenuItem addTransactionItem = new MenuItem("Add Transaction");
         addTransactionItem.setOnAction(e -> {addTransaction();});
@@ -181,6 +184,7 @@ public class BudgetApplication extends Application {
         dashboard.setRight(null);
         dashboard.setCenter(null);
 
+        setupDashboard();
         Scene dashboardScene = new Scene(dashboard, 1280, 720);
 
         budgetApplicationStage.setScene(dashboardScene);
@@ -661,6 +665,7 @@ public class BudgetApplication extends Application {
                     typeComboBox.getValue().charAt(0), amount, descriptionField.getText(), categoryComboBox.getValue());
             DB_Access.Closing(dbConnect);
             transactionFormStage.close();
+            setupDashboard();
 
         });
         // Layout
@@ -775,6 +780,7 @@ public class BudgetApplication extends Application {
                     // Assume method exists to update transaction
                     DB_Transaction.updateTransaction(dbConnect, finalTransactionId, new java.sql.Date(new java.util.Date().getTime()), nameField.getText(), typeComboBox.getValue().charAt(0), amount, descriptionField.getText(), categoryComboBox.getValue());
                     updateTransactionStage.close(); // Close the update window on successful update
+                    setupDashboard();
                 } catch (NumberFormatException nfe) {
                     System.out.println("Please enter a valid amount.");
                 }
@@ -815,14 +821,14 @@ public class BudgetApplication extends Application {
                 // Call method to delete the transaction from the database
                 DB_Transaction.deleteTransaction(dbConnect, transactionId);
                 statusLabel.setText("Transaction deleted successfully.");
+                deleteTransactionStage.close();
+                setupDashboard();
             }
             else{
                 statusLabel.setText("Please enter a valid transaction ID.");
-
             }
-
         });
-        deleteTransactionStage.close();
+
     }
     public void addGoal(){
         Stage addGoalStage = new Stage();
@@ -872,6 +878,7 @@ public class BudgetApplication extends Application {
 
                 DB_Goal.addGoal(dbConnect, user.getUserId(), name, totalAmount, date);
                 statusLabel.setText("Goal added successfully.");
+                setupDashboard();
 
             } catch (NumberFormatException ex) {
                 statusLabel.setText("Please enter a valid target amount.");
@@ -918,6 +925,7 @@ public class BudgetApplication extends Application {
             statusLabel.setText("Goal deleted.");
             DB_Access.Closing(dbConnect);
             deleteGoalStage.close();
+            setupDashboard();
         });
     }
     public void contributeToGoal(){
@@ -973,7 +981,82 @@ public class BudgetApplication extends Application {
             finally {
                 DB_Access.Closing(dbConnect);
                 contributeStage.close();
+                setupDashboard();
             }
         });
+    }
+    private TableView<Transaction> createTransactionsTable() {
+        Connection dbConnect = DB_Access.Connect();
+        TableView<Transaction> transactionsTable = new TableView<>();
+
+        // Define columns
+        TableColumn<Transaction, Integer> idColumn = new TableColumn<>("ID");
+        idColumn.setCellValueFactory(new PropertyValueFactory<>("transactionId"));
+
+        TableColumn<Transaction, String> dateColumn = new TableColumn<>("Date");
+        dateColumn.setCellValueFactory(new PropertyValueFactory<>("date"));
+
+        TableColumn<Transaction, String> nameColumn = new TableColumn<>("Name");
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+
+        TableColumn<Transaction, Character> typeColumn = new TableColumn<>("Type");
+        typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
+
+        TableColumn<Transaction, Double> amountColumn = new TableColumn<>("Amount");
+        amountColumn.setCellValueFactory(new PropertyValueFactory<>("amount"));
+
+        TableColumn<Transaction, String> descriptionColumn = new TableColumn<>("Description");
+        descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("description"));
+
+        TableColumn<Transaction, String> categoryColumn = new TableColumn<>("Category");
+        categoryColumn.setCellValueFactory(new PropertyValueFactory<>("categoryName"));
+
+        transactionsTable.getColumns().addAll(idColumn, dateColumn, nameColumn, typeColumn, amountColumn, descriptionColumn, categoryColumn);
+
+        // Load data
+        LinkedList<Transaction> transactions = DB_Transaction.getTransactionList(dbConnect, user.getUserId());
+        transactionsTable.setItems(FXCollections.observableArrayList(transactions));
+        DB_Access.Closing(dbConnect);
+        return transactionsTable;
+    }
+
+    private TableView<Goal> createGoalsTable() {
+        Connection dbConnect = DB_Access.Connect();
+        TableView<Goal> goalsTable = new TableView<>();
+
+        // Define columns
+        TableColumn<Goal, String> nameColumn = new TableColumn<>("Goal Name");
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("goalName"));
+
+        TableColumn<Goal, Double> targetAmountColumn = new TableColumn<>("Target Amount");
+        targetAmountColumn.setCellValueFactory(new PropertyValueFactory<>("goalTotalAmt"));
+
+        TableColumn<Goal, Double> savedAmountColumn = new TableColumn<>("Amount Saved");
+        savedAmountColumn.setCellValueFactory(new PropertyValueFactory<>("goalAmtCollected"));
+
+        TableColumn<Goal, String> dateColumn = new TableColumn<>("Date");
+        dateColumn.setCellValueFactory(new PropertyValueFactory<>("date"));
+
+        goalsTable.getColumns().addAll(nameColumn, targetAmountColumn, savedAmountColumn, dateColumn);
+
+        // Load data
+        LinkedList<Goal> goals = DB_Goal.getGoalList(dbConnect, user.getUserId());
+        goalsTable.setItems(FXCollections.observableArrayList(goals));
+        DB_Access.Closing(dbConnect);
+        return goalsTable;
+    }
+
+    private void setupDashboard() {
+        TabPane tabPane = new TabPane();
+
+        Tab transactionsTab = new Tab("Transactions", createTransactionsTable());
+        transactionsTab.setClosable(false);
+
+        Tab goalsTab = new Tab("Goals", createGoalsTable());
+        goalsTab.setClosable(false);
+
+        tabPane.getTabs().addAll(transactionsTab, goalsTab);
+
+        dashboard.setCenter(tabPane);
     }
 }
