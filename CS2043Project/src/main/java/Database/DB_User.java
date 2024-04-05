@@ -62,10 +62,10 @@ public class DB_User {
      * Gets the ID of a user given the username from .
      * @param username Username of userID to find.
      */
-    public static int getUserIDbyName(Connection dbConnection, String username) throws UserNotFoundException {
+    public static Integer getUserIDbyName(Connection dbConnection, String username) throws UserNotFoundException {
         CallableStatement dbStatement = null;
         ResultSet dbResultSet = null;
-        int userID = 0;
+        Integer userID = 0;
 
         try{
             dbStatement = dbConnection.prepareCall("{CALL getUserIDByName(?)}");
@@ -135,5 +135,30 @@ public class DB_User {
             DB_Access.getSQLException(e);
         }
         return list;
+    }
+
+    public static boolean checkIfUserExists(Connection dbConnection, String username){
+        CallableStatement dbStatement = null;
+        ResultSet dbResultSet = null;
+        boolean result = false;
+
+        try{
+            dbStatement = dbConnection.prepareCall("{CALL checkIfUserExists(?)}");
+            dbStatement.setString("username", username);
+            dbResultSet = dbStatement.executeQuery();
+
+            if (dbResultSet.next()){
+                if (dbResultSet.getInt(1) == 1){
+                    result = true;
+                }
+            }
+        }
+        catch(SQLException e){
+            DB_Access.getSQLException(e);
+        } finally{
+            DB_Access.Closing(dbStatement);
+            DB_Access.ClosingResultSet(dbResultSet);
+        }
+        return result;
     }
 }
