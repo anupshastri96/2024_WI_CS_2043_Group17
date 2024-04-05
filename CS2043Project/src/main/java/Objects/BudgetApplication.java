@@ -1,11 +1,12 @@
 package Objects;
 
-import Database.*;
+import Database.DB_Category;
+import Database.DB_Goal;
+import Database.DB_Transaction;
+import Database.DB_User;
 import Exceptions.UserNotFoundException;
-import Runnables.ChartTest;
-import javafx.application.Application;
+import Verification.Verify;
 
-import java.sql.Connection;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -39,7 +40,7 @@ public class BudgetApplication {
             switch (userInput) {
                 case "0" -> programRunning = false;
                 case "1" -> addTransaction(scanner, username);
-                case "2" -> statementsMenu(scanner, args);
+                case "2" -> statementsMenu();
                 case "3" -> transactionsMenu(scanner, username);
                 case "4" -> goalsMenu();
                 case "5" -> categoriesMenu(scanner);
@@ -95,27 +96,7 @@ public class BudgetApplication {
     }
 
 
-    private static void statementsMenu(Scanner scanner, String[] args) {
-        boolean menuOpen = true;
-        while (menuOpen) {
-            //Case 6 Category branch
-            System.out.println("""
-                    ==========================
-                    0 | Previous Menu
-                    1 | Create YTD budget chart
-                    2 | -
-                    3 | -
-                    """);
-            String userInput = scanner.next();
-            switch (userInput) {
-                case "0" -> menuOpen = false;
-                case "1" -> ChartTest.launch(ChartTest.class, args);
-                case "2" -> System.out.println("");
-                case "3" -> deleteCategory();
-                default -> {
-                }
-            }
-        }
+    private static void statementsMenu() {
     }
 
     /**
@@ -153,8 +134,6 @@ public class BudgetApplication {
      * @param scanner scanner for user input.
      */
     private static void registerPrompt(Scanner scanner){
-        Connection dbConnection = DB_Access.Connect();
-
         boolean conditionCheck = false;
         while (!conditionCheck) {
             String username = null;
@@ -163,7 +142,7 @@ public class BudgetApplication {
                 try {
                     System.out.println("Register | Please enter username:");
                     username = scanner.next();
-                    DB_User.getUserIDbyName(dbConnection,username);
+                    DB_User.getUserIDbyName(username);
                     System.out.println("Username is already in use");
                 } catch (UserNotFoundException e) {
                     existingUserCondition = true;
@@ -174,11 +153,10 @@ public class BudgetApplication {
             String password = scanner.next();
             System.out.println("Register | Please enter email:");
             String email = scanner.next();
-            DB_User.addUser(dbConnection,username,password,email,0);
+            DB_User.addUser(username,password,email,0);
             conditionCheck = true;
 
         }
-        DB_Access.Closing(dbConnection);
     }
 
     /**
@@ -187,7 +165,6 @@ public class BudgetApplication {
      * @return the username of user.
      */
     private static String loginPrompt(Scanner scanner){
-        Connection dbConnection = DB_Access.Connect();
         boolean conditionCheck = false;
         String username = null;
 
@@ -199,9 +176,9 @@ public class BudgetApplication {
                 String password = scanner.next();
 
                 System.out.println("Login | Verifying, please wait...");
-                int userID = DB_User.getUserIDbyName(dbConnection,username);
+                int userID = DB_User.getUserIDbyName(username);
                 System.out.println(userID);
-                user = DB_User.getUser(dbConnection,userID);
+                user = DB_User.getUser(userID);
 
                 if (user.password.equals(password)) {
                     conditionCheck = true;
@@ -215,7 +192,6 @@ public class BudgetApplication {
         }
         System.out.println("Login Successful | Welcome "+ username);
         System.out.println(user.getUserId());
-        DB_Access.Closing(dbConnection);
         return username;
     }
 
@@ -234,43 +210,19 @@ public class BudgetApplication {
             switch (userInput) {
                 case "0" -> menuOpen = false;
                 case "1" -> addTransaction(scanner, username);
-                case "2" -> updateTransaction();
-                case "3" -> deleteTransaction();
+                case "2" -> updateTransaction(scanner);
+                case "3" -> deleteTransaction(scanner);
                 default -> {
                 }
             }
         }
     }
-    private static void viewListMenu(Scanner scanner){
-        Connection dbConnection = DB_Access.Connect();
-        //Case 3 Transaction branch
-        boolean menuOpen = true;
-        while (menuOpen) {
-            System.out.println("""
-                    ==========================
-                    0 | Previous Menu
-                    1 | View Transactions
-                    2 | View Goals
-                    3 | View Categories
-                    """);
-            String userInput = scanner.next();
-            switch (userInput) {
-                case "0" -> menuOpen = false;
-                case "1" -> ListPrinters.printTransactionList(DB_Transaction.getTransactionList(dbConnection,user.getUserId()));
-                case "2" -> ListPrinters.printGoalsTable(DB_Goal.getGoalList(dbConnection,user.getUserId()));
-                case "3" -> ListPrinters.printCategoryList(DB_Category.getCategoryList(dbConnection,user.getUserId()));
-                default -> {
-                }
-            }
-        }
 
-    }
 
     private static void addTransaction(Scanner scanner, String username) {
-        Connection dbConnection = DB_Access.Connect();
         int userID;
         try {
-            userID = DB_User.getUserIDbyName(dbConnection,username); // Get the user ID based on username
+            userID = DB_User.getUserIDbyName(username); // Get the user ID based on username
         } catch (UserNotFoundException e) {
             e.printStackTrace(); // Print the error if user is not found
             return;// Exit the method if the user is not found
@@ -306,24 +258,109 @@ public class BudgetApplication {
             if (category.equals("-"))
                 category = null;
 
-            else if(DB_Category.getCategory(dbConnection,userID, category) == null){
+            else if(DB_Category.getCategory(userID, category) == null){
                 System.out.println("New Transaction | Category does not exist:");
                 continue; // Ask for the transaction details again
             }
 
-            DB_Transaction.addTransaction(dbConnection,userID, name, type.charAt(0), amount, description, category);
+            DB_Transaction.addTransaction(userID, name, type.charAt(0), amount, description, category);
             System.out.println("Transaction added successfully.");
             break; // Break out of the loop since transaction is successfully added
         }
-        DB_Access.Closing(dbConnection);
     }
 
-    private static void deleteTransaction() {
-        Connection dbConnect = DB_Access.Connect();
-        ListPrinters.printTransactionList(DB_Transaction.getTransactionList(dbConnect, user.getUserId()));
-        DB_Access.Closing(dbConnect);
+    private static void deleteTransaction(Scanner scanner) {
+        ListPrinters.printTransactionList(DB_Transaction.getTransactionList(user.getUserId()));
+        System.out.println("Delete Transaction | Please enter Transaction ID:");
+        int transactionId = scanner.nextInt();
+        boolean found = Verify.doesTransactionExist(transactionId, DB_Transaction.getTransactionList(user.getUserId()));
+        if(found)
+            DB_Transaction.deleteTransaction(transactionId);
+        else{
+            System.out.println("Delete Transaction | Error, no transaction with that id found!");
+        }
     }
 
-    private static void updateTransaction() {
+    private static void updateTransaction(Scanner scanner) {
+        ListPrinters.printTransactionList(DB_Transaction.getTransactionList(user.getUserId()));
+        System.out.println("Update Transaction | Please enter Transaction ID:");
+        int transactionId = scanner.nextInt();
+        scanner.nextLine(); // Consume the newline left-over
+        System.out.println("Please wait...");
+        boolean found = Verify.doesTransactionExist(transactionId, DB_Transaction.getTransactionList(user.getUserId()));
+        if (found) {
+            Transaction transaction = DB_Transaction.getTransactionById(transactionId);
+
+            System.out.println("Update Transaction | Enter new name, or type (-) for no change:");
+            String name = scanner.nextLine();
+            if (name.equals("-")) {
+                name = transaction.getName();
+            }
+
+            System.out.println("Update Transaction | Please input updated date (YYYY-MM-DD):");
+            String date = scanner.nextLine();
+            if (!Verify.isValidDate(date) && !date.equals("-")) {
+                System.out.println("Date not correct!");
+                return; // Stop execution if the date is invalid
+            }
+            if (date.equals("-")) {
+                date = transaction.getDate();
+            }
+
+            System.out.println("Update Transaction | Enter new Type or type (-) for no change:");
+            char type = scanner.nextLine().charAt(0);
+            if (type == '-') {
+                type = transaction.getType();
+            }
+
+            System.out.println("Update Transaction | Enter new amount or type (-1) for no change:");
+            double amount = scanner.nextDouble();
+            scanner.nextLine(); // Consume the newline
+            if (amount == -1) {
+                amount = transaction.getAmount(); // Use getAmount here
+            }
+
+            System.out.println("Update Transaction | Enter new description or type (-) for no change:");
+            String description = scanner.nextLine();
+            if (description.equals("-")) {
+                description = transaction.getDescription();
+            }
+
+            System.out.println("Update Transaction | Enter new category or type (-) for no change:");
+            String category = scanner.nextLine();
+            if (!category.equals("-") && !Verify.doesCategoryExist(user.getUserId(), category)) {
+                System.out.println("Category does not exist. No change made.");
+                category = transaction.getCategory().getName();
+            } else if (category.equals("-")) {
+                category = transaction.getCategory().getName();
+            }
+
+            DB_Transaction.updateTransaction(transactionId, date, name, type, amount, description, category);
+        } else {
+            System.out.println("Update Transaction | Error, no transaction with that id found!");
+        }
+    }
+
+    private static void viewListMenu(Scanner scanner){
+        boolean menuOpen = true;
+        while (menuOpen) {
+            System.out.println("""
+                    ==========================
+                    0 | Previous Menu
+                    1 | View Transactions
+                    2 | View Goals
+                    3 | View Categories
+                    """);
+            String userInput = scanner.next();
+            switch (userInput) {
+                case "0" -> menuOpen = false;
+                case "1" -> ListPrinters.printTransactionList(DB_Transaction.getTransactionList(user.getUserId()));
+                case "2" -> ListPrinters.printGoalsTable(DB_Goal.getGoalList(user.getUserId()));
+                case "3" -> ListPrinters.printCategoryList(DB_Category.getCategoryList(user.getUserId()));
+                default -> {
+                }
+            }
+        }
+
     }
 }
