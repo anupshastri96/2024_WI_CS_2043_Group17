@@ -18,7 +18,7 @@ public class DB_Goal {
             dbStatement.setString(2, name);
             dbStatement.setDouble(3, totalAmount);
             dbStatement.setString(4, date);
-            dbStatement.executeQuery();
+            dbStatement.executeUpdate();
 
         }
         catch(SQLException e){

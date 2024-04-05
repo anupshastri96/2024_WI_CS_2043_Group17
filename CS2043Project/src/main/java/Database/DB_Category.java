@@ -48,6 +48,40 @@ public class DB_Category {
         return category;
     }
 
+    public static void updateCategory(Connection dbConnection, int userId, String categoryName, String newCategoryName, Integer newBudget){
+        CallableStatement dbStatement = null;
+        try {
+            dbStatement = dbConnection.prepareCall("{CALL updateCategory(?,?,?,?)}");
+            dbStatement.setInt(1, userId);
+            dbStatement.setString(2, categoryName);
+            dbStatement.setString(3, newCategoryName);
+            dbStatement.setInt(4, newBudget);
+            dbStatement.executeQuery();
+        }
+        catch(SQLException e){
+            DB_Access.getSQLException(e);
+        }
+        finally{
+            DB_Access.Closing(dbStatement);
+        }
+    }
+
+    public static void deleteCategory(Connection dbConnection, int userId, String categoryName){
+        CallableStatement dbStatement = null;
+        try {
+            dbStatement = dbConnection.prepareCall("{CALL deleteCategory(?,?)}");
+            dbStatement.setInt(1, userId);
+            dbStatement.setString(2, categoryName);
+            dbStatement.executeQuery();
+        }
+        catch(SQLException e){
+            DB_Access.getSQLException(e);
+        }
+        finally{
+            DB_Access.Closing(dbStatement);
+        }
+    }
+
     public static LinkedList<String> getCategoriesInRange(Connection dbConnection, int userID, LocalDate startDate, LocalDate endDate){
         LinkedList<String> list = new LinkedList<>();
         CallableStatement dbStatement = null;
@@ -90,13 +124,30 @@ public class DB_Category {
         }
         return list;
     }
-    public static boolean doesCategoryExist(Connection dbConnection, int userId, String category){
-        LinkedList<Category> categories = getCategoryList(dbConnection, userId);
-        for (Category value : categories) {
-            if (value.getName().equals(category)) {
-                return true;
+
+    public static boolean checkIfCategoryExists(Connection dbConnection, int userId, String category){
+        CallableStatement dbStatement = null;
+        ResultSet dbResultSet = null;
+        boolean result = false;
+
+        try{
+            dbStatement = dbConnection.prepareCall("{CALL checkIfCategoryExists(?,?)}");
+            dbStatement.setInt(1, userId);
+            dbStatement.setString(2, category);
+            dbResultSet = dbStatement.executeQuery();
+
+            if (dbResultSet.next()){
+                if (dbResultSet.getInt(1) == 1){
+                    result = true;
+                }
             }
         }
-        return false;
+        catch(SQLException e){
+            DB_Access.getSQLException(e);
+        } finally{
+            DB_Access.Closing(dbStatement);
+            DB_Access.ClosingResultSet(dbResultSet);
+        }
+        return result;
     }
 }

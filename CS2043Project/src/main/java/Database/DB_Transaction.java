@@ -63,11 +63,11 @@ public class DB_Transaction {
         //TODO Test this method
 
         try {
-            dbStatement = dbConnection.prepareCall("{CALL updateTransaction(?,?,?,?,?,?)}");
-            dbStatement.setInt(2, transactionId);
-            dbStatement.setDate(3, date);
-            dbStatement.setString(4, name);
-            dbStatement.setString(5, type + "");
+            dbStatement = dbConnection.prepareCall("{CALL updateTransaction(?,?,?,?,?,?,?)}");
+            dbStatement.setInt(1, transactionId);
+            dbStatement.setDate(2, date);
+            dbStatement.setString(3, name);
+            dbStatement.setString(4, String.valueOf(type));
             dbStatement.setDouble(5, amount);
             dbStatement.setString(6, description);
             dbStatement.setString(7, category);
@@ -122,6 +122,32 @@ public class DB_Transaction {
         }
 
         return transaction;
+    }
+
+    public static boolean checkIfTrancactionExists(Connection dbConnection, int userId, int transactionId){
+        CallableStatement dbStatement = null;
+        ResultSet dbResultSet = null;
+        boolean result = false;
+
+        try{
+            dbStatement = dbConnection.prepareCall("{CALL checkIfTransactionExists(?,?)}");
+            dbStatement.setInt(1, userId);
+            dbStatement.setInt(2, transactionId);
+            dbResultSet = dbStatement.executeQuery();
+
+            if (dbResultSet.next()){
+                if (dbResultSet.getInt(1) == 1){
+                    result = true;
+                }
+            }
+        }
+        catch(SQLException e){
+            DB_Access.getSQLException(e);
+        } finally{
+            DB_Access.Closing(dbStatement);
+            DB_Access.ClosingResultSet(dbResultSet);
+        }
+        return result;
     }
 
 }
