@@ -12,6 +12,7 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -22,8 +23,10 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.layout.BorderPane;
+import javafx.util.Pair;
 
 import java.sql.Connection;
+import java.time.LocalDate;
 import java.util.InputMismatchException;
 import java.util.LinkedList;
 
@@ -31,6 +34,8 @@ public class BudgetApplication extends Application {
 
     protected static User user = null;
     private boolean registerWindowOpen = false;
+
+    private BorderPane dashboard;
 
     @Override
     public void start(Stage primaryStage) {
@@ -132,7 +137,9 @@ public class BudgetApplication extends Application {
 
         MenuItem updateCategoryItem = new MenuItem("Update Category");
         updateCategoryItem.setOnAction(e -> updateCategoryWindow());
+
         MenuItem deleteCategoryItem = new MenuItem("Delete Category");
+        updateCategoryItem.setOnAction(e -> deleteCategoryWindow());
 
         Menu categoriesMenu = new Menu("Categories");
         categoriesMenu.getItems().addAll(addCategoryItem, updateCategoryItem, deleteCategoryItem);
@@ -140,7 +147,6 @@ public class BudgetApplication extends Application {
         //Goals Menu
         MenuItem addGoalItem = new MenuItem("Add Goal");
         addGoalItem.setOnAction(e -> {addGoal();});
-
 
         MenuItem updateGoalItem = new MenuItem("Update Goal");
         updateGoalItem.setOnAction(e -> {updateGoal();});
@@ -158,19 +164,19 @@ public class BudgetApplication extends Application {
 
         Menu dataMenu = new Menu("Data");
 
-        Menu chartsMenu = new Menu("Charts");
+        //Charts Menu
+        MenuItem generateYearlyBudgetChartItem = new MenuItem("Monthly budget chart");
+        generateYearlyBudgetChartItem.setOnAction(e -> {inputYearlyBudgetChart();});
 
+        Menu chartsMenu = new Menu("Charts");
+        chartsMenu.getItems().addAll(generateYearlyBudgetChartItem);
 
         //Menu Bar
         MenuBar menuBar = new MenuBar();
         menuBar.getMenus().addAll(transactionsMenu,categoriesMenu,goalsMenu,statementMenu,dataMenu,chartsMenu);
 
-
-
-
-
         // Create UI elements
-        BorderPane dashboard = new BorderPane();
+        dashboard = new BorderPane();
         dashboard.setTop(menuBar);
         dashboard.setBottom(null);
         dashboard.setLeft(null);
@@ -187,6 +193,91 @@ public class BudgetApplication extends Application {
 
     private void closeApplication() {
 
+    }
+
+    private void inputYearlyBudgetChart(){
+        Stage createBudgetChartScene = new Stage();
+
+        Label monthsLabel = new Label("Number of Months to search:");
+        TextField monthsField = new TextField("12");
+
+        Label endDateLabel = new Label("Pick end date:");
+        DatePicker endDatePicker = new DatePicker(LocalDate.now());
+
+        Button cancelButton = new Button("Cancel");
+        Button createGraphButton = new Button("Create Graph");
+
+        createGraphButton.setOnAction(e -> {
+            int numberOfMonths = Integer.parseInt(monthsField.getText());
+            LocalDate endDate = endDatePicker.getValue();
+            createChartScene(numberOfMonths, endDate);
+            createBudgetChartScene.close(); // Close input window after creating the chart
+        });
+
+        GridPane gridPane = new GridPane();
+        gridPane.setPadding(new Insets(10));
+        gridPane.setVgap(10);
+        gridPane.setHgap(10);
+
+        gridPane.add(monthsLabel, 0, 0);
+        gridPane.add(monthsField, 1, 0);
+        gridPane.add(endDateLabel, 0, 1);
+        gridPane.add(endDatePicker, 1, 1);
+        gridPane.add(cancelButton, 1, 2);
+        gridPane.add(createGraphButton, 0, 2);
+
+        // Set scene
+        Scene scene = new Scene(gridPane, 300, 150);
+        createBudgetChartScene.setScene(scene);
+        createBudgetChartScene.setTitle("Budget Tracking Chart Creation");
+        createBudgetChartScene.initModality(Modality.APPLICATION_MODAL);
+        createBudgetChartScene.show();
+
+    }
+
+    public void createChartScene(int month, LocalDate date){
+
+        CategoryAxis xAxis = new CategoryAxis();
+        NumberAxis yAxis = new NumberAxis();
+
+        yAxis.setLabel("Total Spent");
+        xAxis.setLabel("Month");
+
+        LocalDate startDate = date.withDayOfMonth(1).minusMonths(month);
+        LocalDate endDate;
+
+        StackedBarChart<String, Number> budgetChart =
+                new StackedBarChart<String, Number>(xAxis, yAxis);
+
+
+        Connection connection = DB_Access.Connect();
+
+        //This is number of months to search as
+        for (int i = 0; i < month; i++) {
+
+            startDate = startDate.plusMonths(1);
+            endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+
+            LinkedList<String> categories = DB_Category.getCategoriesInRange(connection, user.getUserId(), startDate, endDate);
+
+            for (String category : categories) {
+                double sum = 0;
+                try {
+                    sum = DB_implemention.budgetSum(connection, user.getUserId(), category, startDate, endDate, 'W');
+                } catch (DateFormatException e) {
+                    e.printStackTrace();
+                }
+                XYChart.Series<String, Number> series =
+                        new XYChart.Series<>();
+                series.setName(category);
+                series.getData().add(new XYChart.Data<String, Number>(startDate.getMonth().toString()+" "+startDate.getYear(), sum));
+                budgetChart.getData().add(series);
+            }
+        }
+
+        DB_Access.Closing(connection);
+
+        dashboard.setCenter(budgetChart);
     }
 
     private void addCategoryWindow(){
@@ -286,14 +377,15 @@ public class BudgetApplication extends Application {
                 Connection dbConnection = DB_Access.Connect();
                 if (!DB_Category.checkIfCategoryExists(dbConnection, user.getUserId(), categoryName))
                     throw new InputMismatchException("Category does not exist");
+                Category category = DB_Category.getCategory(dbConnection, user.getUserId(), categoryName);
                 if (categoryName.isBlank())
                     throw new InputMismatchException("Please enter a category name");
                 if (newCategoryName.isBlank())
                     throw new InputMismatchException("Please enter a new category name");
                 else {
-                    statusLabel.setText("Creating Category...");
+                    statusLabel.setText("Updating Category...");
                     DB_Category.updateCategory(dbConnection, user.getUserId(), categoryName, newCategoryName, newBudget);
-
+                    DB_Access.Closing(dbConnection);
                     statusLabel.setText("Category added successfully");
                 }
             }
@@ -315,26 +407,19 @@ public class BudgetApplication extends Application {
         fieldsPane.add(categoryNameField, 1, 0);
         fieldsPane.add(newCategoryNameLabel, 0, 1);
         fieldsPane.add(newCategoryNameField, 1, 1);
-        fieldsPane.add(newBudgetField, 1, 2);
+        fieldsPane.add(newBudgetLabel, 1, 2);
         fieldsPane.add(newBudgetField, 1, 2);
         fieldsPane.add(statusLabel, 0, 3, 2, 3);
+        fieldsPane.add(updateButton, 0,4);
+        fieldsPane.add(closeButton, 1,4);
 
-        HBox buttonBox = new HBox(10);
-        buttonBox.getChildren().addAll(updateButton, closeButton);
+        Scene updateCategoryScene = new Scene(fieldsPane, 300, 150);
 
-        VBox updateCategoryWindow = new VBox(10);
-        updateCategoryWindow.getChildren().addAll(fieldsPane, buttonBox);
-        Scene updateCategoryScene = new Scene(updateCategoryWindow, 300, 150);
 
         updateCategoryStage.setScene(updateCategoryScene);
         updateCategoryStage.setTitle("Update Category");
         updateCategoryStage.initModality(Modality.APPLICATION_MODAL);
         updateCategoryStage.show();
-
-        Scene scene = new Scene(fieldsPane, 300, 200);
-        updateCategoryStage.setScene(scene);
-        updateCategoryStage.show();
-
     }
 
     private void deleteCategoryWindow(){
@@ -349,7 +434,6 @@ public class BudgetApplication extends Application {
         for (Category category : categories) {
             categoryComboBox.getItems().add(category.getName());
         }
-
 
         Label statusLabel = new Label();
 
@@ -370,6 +454,7 @@ public class BudgetApplication extends Application {
                     DB_Category.deleteCategory(dbConnection, user.getUserId(), categoryComboBox.getValue());
 
                     statusLabel.setText("Category deleted successfully");
+                    DB_Access.Closing(dbConnection);
                 }
             }
             catch (InputMismatchException ex) {
@@ -390,18 +475,13 @@ public class BudgetApplication extends Application {
         fieldsPane.add(categoryComboBox, 1, 0);
         fieldsPane.add(deleteButton, 0, 1);
         fieldsPane.add(closeButton, 1, 1);
-
         fieldsPane.add(statusLabel, 0, 2, 1, 2);
 
-        Scene addCategoryScene = new Scene(fieldsPane, 300, 150);
+        Scene deleteCategoryScene = new Scene(fieldsPane, 300, 150);
 
-        deleteCategoryStage.setScene(addCategoryScene);
+        deleteCategoryStage.setScene(deleteCategoryScene);
         deleteCategoryStage.setTitle("Delete Category");
         deleteCategoryStage.initModality(Modality.APPLICATION_MODAL);
-        deleteCategoryStage.show();
-
-        Scene scene = new Scene(fieldsPane, 300, 200);
-        deleteCategoryStage.setScene(scene);
         deleteCategoryStage.show();
     }
 
