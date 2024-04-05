@@ -1,8 +1,10 @@
 package Objects;
 
+import Database.DB_Access;
 import Database.DB_Transaction;
 import Database.DB_User;
 
+import java.sql.Connection;
 import java.util.LinkedList;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -99,13 +101,20 @@ public class User {
 
     /**
      * Attempts to log the user in with a username and password.
-     *
+     * @param dbConnection the connection to the database.
      * @param username The username for login attempt.
      * @param password The password for login attempt.
      * @return true if login is successful, false otherwise.
      */
+    public static User login(Connection dbConnection, String username, String password) {
+        return DB_User.login(dbConnection, username, password);
+    }
+
     public static User login(String username, String password) {
-        return DB_User.login(username, password);
+        Connection dbConnection = DB_Access.Connect();
+        User user = DB_User.login(dbConnection, username, password);
+        DB_Access.Closing(dbConnection);
+        return user;
     }
 
     private String getPassword() {

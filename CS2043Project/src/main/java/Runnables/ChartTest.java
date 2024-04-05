@@ -4,6 +4,7 @@ package Runnables;
  * This class is a test for the chart system
  */
 
+import Database.DB_Access;
 import Database.DB_Category;
 import Database.DB_implemention;
 import Exceptions.DateFormatException;
@@ -18,6 +19,7 @@ import javafx.scene.shape.Line;
 import javafx.util.Pair;
 
 import java.awt.*;
+import java.sql.Connection;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -43,18 +45,20 @@ public class ChartTest extends Application {
 
         LinkedList<Pair<LocalDate, Number>> list = null;
 
+        Connection connection = DB_Access.Connect();
+
         //This is number of months to search as
         for (int i = 0; i < 12; i++) {
 
             startDate = startDate.minusMonths(1).withDayOfMonth(1);
             endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
 
-            LinkedList<String> categories = DB_Category.getCategoriesInRange(2,startDate, endDate);
+            LinkedList<String> categories = DB_Category.getCategoriesInRange(connection, 2,startDate, endDate);
 
             for (String category : categories) {
                 double sum = 0;
                 try {
-                    sum = DB_implemention.budgetSum(2, category, startDate, endDate, 'W');
+                    sum = DB_implemention.budgetSum(connection, 2, category, startDate, endDate, 'W');
                 } catch (DateFormatException e) {
                     e.printStackTrace();
                 }
@@ -65,6 +69,8 @@ public class ChartTest extends Application {
                 chart.getData().add(series);
             }
         }
+
+        DB_Access.Closing(connection);
 
         Scene scene = new Scene(chart, 800, 600);
         stage.setScene(scene);

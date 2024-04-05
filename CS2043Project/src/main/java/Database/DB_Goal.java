@@ -8,8 +8,8 @@ import java.sql.*;
 import java.util.LinkedList;
 
 public class DB_Goal {
-    public static void addGoal(int userid, String name, double totalAmount, String date){
-        Connection dbConnection = DB_Access.Connect();
+    public static void addGoal(Connection dbConnection, int userid, String name, double totalAmount, String date){
+
         CallableStatement dbStatement = null;
         try{
 
@@ -25,12 +25,11 @@ public class DB_Goal {
             DB_Access.getSQLException(e);
         }
         finally{
-            DB_Access.Closing(dbStatement, dbConnection);
+            DB_Access.Closing(dbStatement);
         }
     }
 
-    public static void removeGoal(int userid, String name){
-        Connection dbConnection = DB_Access.Connect();
+    public static void removeGoal(Connection dbConnection, int userid, String name){
         CallableStatement dbStatement = null;
         try{
 
@@ -43,12 +42,11 @@ public class DB_Goal {
             DB_Access.getSQLException(e);
         }
         finally{
-            DB_Access.Closing(dbStatement, dbConnection);
+            DB_Access.Closing(dbStatement);
         }
     }
-    public static LinkedList<Goal> getGoalList(int userid){
+    public static LinkedList<Goal> getGoalList(Connection dbConnection, int userid){
         LinkedList<Goal> list = new LinkedList<>();
-        Connection dbConnection = DB_Access.Connect();
         CallableStatement dbStatement = null;
         ResultSet dbResultSet = null;
         Goal goal = null;
@@ -68,11 +66,14 @@ public class DB_Goal {
         catch (SQLException e){
             DB_Access.getSQLException(e);
         }
+        finally{
+            DB_Access.Closing(dbStatement);
+            DB_Access.ClosingResultSet(dbResultSet);
+        }
         return list;
     }
 
-    public static void contributeToGoal(int userId, String name, double amount){
-        Connection dbConnection = DB_Access.Connect();
+    public static void contributeToGoal(Connection dbConnection, int userId, String name, double amount){
         CallableStatement dbStatement = null;
         try{
             dbStatement = dbConnection.prepareCall("{CALL contributeToGoal(?,?,?)}");
@@ -85,7 +86,7 @@ public class DB_Goal {
             DB_Access.getSQLException(e);
         }
         finally{
-            DB_Access.Closing(dbStatement, dbConnection);
+            DB_Access.Closing(dbStatement);
         }
     }
 
