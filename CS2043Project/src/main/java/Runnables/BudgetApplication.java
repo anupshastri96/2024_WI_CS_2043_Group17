@@ -1,6 +1,7 @@
 package Runnables;
 
 import Database.*;
+import Exceptions.DateFormatException;
 import Exceptions.PasswordNotEqualException;
 import Objects.Category;
 import Objects.Goal;
@@ -142,7 +143,7 @@ public class BudgetApplication extends Application {
 
 
         MenuItem updateGoalItem = new MenuItem("Update Goal");
-        updateGoalItem.setOnAction(e -> {updateGoal()});
+        updateGoalItem.setOnAction(e -> {updateGoal();});
 
         MenuItem deleteGoalItem = new MenuItem("Delete Goal");
         deleteGoalItem.setOnAction(e -> {});
@@ -797,8 +798,9 @@ public class BudgetApplication extends Application {
             } catch (NumberFormatException ex) {
                 statusLabel.setText("Please enter a valid target amount.");
             } catch (Exception ex) {
-                statusLabel.setText("Failed to add the goal. " + ex.getMessage());
-            } finally {
+                statusLabel.setText("Failed to add the goal.");
+            }
+            finally {
                 DB_Access.Closing(dbConnect);
                 addGoalStage.close();
             }
@@ -840,9 +842,6 @@ public class BudgetApplication extends Application {
         TextField contributionField = new TextField();
         Button contributeButton = new Button("Contribute");
         Label statusLabel = new Label();
-
-
-
 
 
         gridPane.add(new Label("Select Goal:"), 0, 0);

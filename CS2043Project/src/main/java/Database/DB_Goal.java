@@ -28,7 +28,7 @@ public class DB_Goal {
             DB_Access.Closing(dbStatement);
         }
     }
-
+    
     public static void removeGoal(Connection dbConnection, int userid, String name){
         CallableStatement dbStatement = null;
         try{
