@@ -8,8 +8,7 @@ import java.time.LocalDate;
 import java.util.LinkedList;
 
 public class DB_Category {
-    public static void addCategory(int userid, String category, double amount){
-        Connection dbConnection = DB_Access.Connect();
+    public static void addCategory(Connection dbConnection, int userid, String category, double amount){
         CallableStatement dbStatement = null;
 
         try{
@@ -23,11 +22,10 @@ public class DB_Category {
             DB_Access.getSQLException(e);
         }
         finally{
-            DB_Access.Closing(dbStatement, dbConnection);
+            DB_Access.Closing(dbStatement);
         }
     }
-    public static Category getCategory(int user_id, String categoryName){
-        Connection dbConnection = DB_Access.Connect();
+    public static Category getCategory(Connection dbConnection, int user_id, String categoryName){
         CallableStatement dbStatement = null;
         Category category = null;
         ResultSet dbResultSet = null;
@@ -45,14 +43,13 @@ public class DB_Category {
             DB_Access.getSQLException(e);
         }
         finally{
-            DB_Access.Closing(dbStatement, dbConnection);
+            DB_Access.Closing(dbStatement);
         }
         return category;
     }
 
-    public static LinkedList<String> getCategoriesInRange(int userID, LocalDate startDate, LocalDate endDate){
+    public static LinkedList<String> getCategoriesInRange(Connection dbConnection, int userID, LocalDate startDate, LocalDate endDate){
         LinkedList<String> list = new LinkedList<>();
-        Connection dbConnection = DB_Access.Connect();
         CallableStatement dbStatement = null;
         ResultSet dbResultSet = null;
 
@@ -72,9 +69,8 @@ public class DB_Category {
         return list;
     }
 
-    public static LinkedList<Category> getCategoryList(int userid){
+    public static LinkedList<Category> getCategoryList(Connection dbConnection, int userid){
         LinkedList<Category> list = new LinkedList<>();
-        Connection dbConnection = DB_Access.Connect();
         CallableStatement dbStatement = null;
         ResultSet dbResultSet = null;
         Category category = null;
@@ -94,5 +90,13 @@ public class DB_Category {
         }
         return list;
     }
-
+    public static boolean doesCategoryExist(Connection dbConnection, int userId, String category){
+        LinkedList<Category> categories = getCategoryList(dbConnection, userId);
+        for (Category value : categories) {
+            if (value.getName().equals(category)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

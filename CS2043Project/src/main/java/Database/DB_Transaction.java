@@ -1,11 +1,11 @@
 package Database;
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.LinkedList;
 import Objects.*;
 
 public class DB_Transaction {
-    public static void addTransaction(int userid, String name, char type, double amount, String description, String category){
-        Connection dbConnection = DB_Access.Connect();
+    public static void addTransaction(Connection dbConnection, int userid, String name, char type, double amount, String description, String category){
         CallableStatement dbStatement = null;
         try{
 
@@ -23,12 +23,11 @@ public class DB_Transaction {
             DB_Access.getSQLException(e);
         }
         finally{
-            DB_Access.Closing(dbStatement, dbConnection);
+            DB_Access.Closing(dbStatement);
         }
     }
-    public static LinkedList<Transaction> getTransactionList(int userId){
+    public static LinkedList<Transaction> getTransactionList(Connection dbConnection, int userId){
         LinkedList<Transaction> list = new LinkedList<>();
-        Connection dbConnection = DB_Access.Connect();
         CallableStatement dbStatement = null;
         Transaction transaction = null;
         ResultSet dbResultSet = null;
@@ -38,35 +37,37 @@ public class DB_Transaction {
             dbResultSet = dbStatement.executeQuery();
             while(dbResultSet.next()){
                 int transactionId = dbResultSet.getInt(2);
-                String date = dbResultSet.getString(3);
+                Date date = dbResultSet.getDate(3);
                 String name = dbResultSet.getString(4);
                 char type = dbResultSet.getString(5).charAt(0);
                 double amount = dbResultSet.getDouble(6);
                 String description = dbResultSet.getString(7);
                 String categoryName = dbResultSet.getString(8);
 
-                Category category = DB_Category.getCategory(userId, categoryName);
+                Category category = DB_Category.getCategory(dbConnection,userId, categoryName);
                 transaction = new Transaction(userId, transactionId, date, name, type, amount, description, category);
                 list.add(transaction);
             }
         }
         catch (SQLException e){
             DB_Access.getSQLException(e);
+        } finally {
+            DB_Access.Closing(dbStatement);
+            DB_Access.ClosingResultSet(dbResultSet);
         }
         return list;
     }
 
-    public static void updateTransaction(int transactionId, String date, String name, char type, double amount, String description, String category) {
-        Connection dbConnection = DB_Access.Connect();
+    public static void updateTransaction(Connection dbConnection, int transactionId, Date date, String name, char type, double amount, String description, String category) {
         CallableStatement dbStatement = null;
         //TODO Test this method
 
         try {
             dbStatement = dbConnection.prepareCall("{CALL updateTransaction(?,?,?,?,?,?)}");
-            dbStatement.setInt(1, transactionId);
-            dbStatement.setString(2, date);
-            dbStatement.setString(3, name);
-            dbStatement.setString(4, type + "");
+            dbStatement.setInt(2, transactionId);
+            dbStatement.setDate(3, date);
+            dbStatement.setString(4, name);
+            dbStatement.setString(5, type + "");
             dbStatement.setDouble(5, amount);
             dbStatement.setString(6, description);
             dbStatement.setString(7, category);
@@ -74,12 +75,11 @@ public class DB_Transaction {
         } catch (SQLException e) {
             DB_Access.getSQLException(e);
         } finally {
-            DB_Access.Closing(dbStatement, dbConnection);
+            DB_Access.Closing(dbStatement);
         }
     }
 
-    public static void deleteTransaction(int transactionId) {
-        Connection dbConnection = DB_Access.Connect();
+    public static void deleteTransaction(Connection dbConnection, int transactionId) {
         CallableStatement dbStatement = null;
 
         try {
@@ -89,12 +89,11 @@ public class DB_Transaction {
         } catch (SQLException e) {
             DB_Access.getSQLException(e);
         } finally {
-            DB_Access.Closing(dbStatement, dbConnection);
+            DB_Access.Closing(dbStatement);
         }
     }
 
-    public static Transaction getTransactionById(int transactionId) {
-        Connection dbConnection = DB_Access.Connect();
+    public static Transaction getTransactionById(Connection dbConnection, int transactionId) {
         CallableStatement dbStatement = null;
         ResultSet dbResultSet;
         Transaction transaction = null;
@@ -106,25 +105,23 @@ public class DB_Transaction {
 
             if (dbResultSet.next()) {
                 int userId = dbResultSet.getInt(1);
-                String date = dbResultSet.getString(3);
+                Date date = dbResultSet.getDate(3);
                 String name = dbResultSet.getString(4);
                 char type = dbResultSet.getString(5).charAt(0);
                 double amount = dbResultSet.getDouble(6);
                 String description = dbResultSet.getString(7);
                 String categoryName = dbResultSet.getString(8);
-                Category category = DB_Category.getCategory(userId, categoryName);
+                Category category = DB_Category.getCategory(dbConnection, userId, categoryName);
 
                 transaction = new Transaction(userId, transactionId, date, name, type, amount, description, category);
             }
         } catch (SQLException e) {
             DB_Access.getSQLException(e);
         } finally {
-            DB_Access.Closing(dbStatement, dbConnection);
+            DB_Access.Closing(dbStatement);
         }
 
         return transaction;
     }
-
-
 
 }

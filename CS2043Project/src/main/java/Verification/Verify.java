@@ -4,6 +4,7 @@ import Database.DB_Category;
 import Objects.Category;
 import Objects.Transaction;
 
+import java.sql.Connection;
 import java.util.LinkedList;
 import java.util.regex.Pattern;
 
@@ -26,8 +27,8 @@ public class Verify {
         return pattern.matcher(date).matches();
     }
 
-    public static boolean doesCategoryExist(int userId, String category){
-        LinkedList<Category> categories = DB_Category.getCategoryList(userId);
+    public static boolean doesCategoryExist(Connection dbConnection, int userId, String category){
+        LinkedList<Category> categories = DB_Category.getCategoryList(dbConnection, userId);
         for (Category value : categories) {
             if (value.getName().equals(category)) {
                 return true;

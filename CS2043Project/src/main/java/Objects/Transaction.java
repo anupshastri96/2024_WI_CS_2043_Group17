@@ -12,7 +12,7 @@ import java.util.LinkedList;
 public class Transaction implements Serializable {
     private int userId;
     private int transactionId;
-    private String date; // The date of the transaction
+    private java.util.Date date; // The date of the transaction
     private String name; // The name associated with the transaction
     private char type; // The type of transaction, e.g., 'I' for income, 'E' for expense
     private double amount; // The amount of the transaction
@@ -36,7 +36,7 @@ public class Transaction implements Serializable {
      * @param amount        The monetary amount of the transaction.
      * @param description   A description of the transaction.
      */
-    public Transaction(int userId, int transactionId, String date, String name, char type, double amount, String description, Category category) {
+    public Transaction(int userId, int transactionId, java.util.Date date, String name, char type, double amount, String description, Category category) {
         this.userId = userId;
         this.transactionId = transactionId;
         this.date = date;
@@ -133,7 +133,7 @@ public class Transaction implements Serializable {
      *
      * @return The transaction date.
      */
-    public String getDate() {
+    public java.util.Date getDate() {
         return date;
     }
 
@@ -142,7 +142,7 @@ public class Transaction implements Serializable {
      *
      * @param date The new date for the transaction.
      */
-    public void setDate(String date){
+    public void setDate(java.util.Date date){
         this.date = date;
     }
 
