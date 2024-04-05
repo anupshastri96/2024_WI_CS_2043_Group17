@@ -1,9 +1,5 @@
 package Database;
-
-import Objects.Category;
-import Objects.DateConversion;
 import Objects.Goal;
-
 import java.sql.*;
 import java.util.LinkedList;
 
