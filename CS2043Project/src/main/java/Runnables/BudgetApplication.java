@@ -132,6 +132,7 @@ public class BudgetApplication extends Application {
 
         MenuItem updateCategoryItem = new MenuItem("Update Category");
         updateCategoryItem.setOnAction(e -> updateCategoryWindow());
+
         MenuItem deleteCategoryItem = new MenuItem("Delete Category");
 
         Menu categoriesMenu = new Menu("Categories");
@@ -141,18 +142,14 @@ public class BudgetApplication extends Application {
         MenuItem addGoalItem = new MenuItem("Add Goal");
         addGoalItem.setOnAction(e -> {addGoal();});
 
-
-        MenuItem updateGoalItem = new MenuItem("Update Goal");
-        updateGoalItem.setOnAction(e -> {updateGoal();});
-
         MenuItem deleteGoalItem = new MenuItem("Delete Goal");
-        deleteGoalItem.setOnAction(e -> {});
+        deleteGoalItem.setOnAction(e -> {deleteGoal();});
 
         MenuItem contributeGoal = new MenuItem("Contribute to Goal");
         contributeGoal.setOnAction(e -> {contributeToGoal();});
 
         Menu goalsMenu = new Menu("Goals");
-        goalsMenu.getItems().addAll(addGoalItem, updateGoalItem, deleteGoalItem, contributeGoal);
+        goalsMenu.getItems().addAll(addGoalItem, deleteGoalItem, contributeGoal);
 
         Menu statementMenu = new Menu("Statements");
 
@@ -806,10 +803,10 @@ public class BudgetApplication extends Application {
             }
         });
     }
-    public void updateGoal(){
+    public void deleteGoal(){
         Connection dbConnect = DB_Access.Connect();
-        Stage updateGoalStage = new Stage();
-        updateGoalStage.setTitle("Update Goal");
+        Stage deleteGoalStage = new Stage();
+        deleteGoalStage.setTitle("Delete Goal");
 
         GridPane gridPane = new GridPane();
         gridPane.setHgap(10);
@@ -821,6 +818,26 @@ public class BudgetApplication extends Application {
         for (Goal goal : goals) {
             goalsComboBox.getItems().add(goal.getGoalName());
         }
+        Button deleteButton = new Button("Delete Goal");
+        Label statusLabel = new Label();
+
+        gridPane.add(new Label("Select Goal to Delete:"), 0, 0);
+        gridPane.add(goalsComboBox, 1, 0);
+        gridPane.add(deleteButton, 1, 1);
+        gridPane.add(statusLabel, 0, 2, 2, 1);
+
+        Scene scene = new Scene(gridPane, 350, 150);
+
+        deleteGoalStage.setScene(scene);
+        deleteGoalStage.show();
+
+        deleteButton.setOnAction(deleteEvent -> {
+            String selectedGoalName = goalsComboBox.getValue();
+            DB_Goal.removeGoal(dbConnect, user.getUserId(), selectedGoalName);
+            statusLabel.setText("Goal deleted.");
+            DB_Access.Closing(dbConnect);
+            deleteGoalStage.close();
+        });
     }
     public void contributeToGoal(){
         Connection dbConnect = DB_Access.Connect();
